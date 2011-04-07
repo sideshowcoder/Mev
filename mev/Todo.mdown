@@ -1,0 +1,18 @@
+ESSENTIAL PRIO TODO
+===================
+
+IF THERE IS TIME TODO
+=====================
+* write Readme
+* Unify coding style: 
+  * , ; { at line start
+  * } on ne line
+
+ESSENTIAL PRIO BUGS
+===================
+
+JUST IN THERE BUGS
+==================
+
+MISSING TESTS
+=============

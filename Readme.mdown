@@ -1,0 +1,38 @@
+Mev & Megi
+==========
+
+Mev is a measurement microframework to handle all kinds of network measurements
+in an evented fashion it is developed as part of the iStrukta Project at the TU
+München. It is based on Nodejs to provide a useful event mechanism. In order to
+provide a maximal output no state is held inside the application per measurement
+request, but it is passed via the events, this enables massive parallel
+measurements.
+
+Megi is a Webfrontend based on [Codeignitor](http://codeigniter.com/) to ease
+the usage of Mev and to provide a visual feedback.
+
+Mev
+---
+### Dependencies
+* nomnomargs
+* redis
+* node [patched to add the ability to set a DNS server per request](https://github.com/sideshowcoder/Add-NodeJS-DNS-Server-Settings)
+* expresso (testing)
+* should (testing)
+
+### Install
+Best install via npm
+  
+  $ npm install
+
+### Use
+Via command line 
+  
+  $ echo '131.159.20' > input.txt
+  $ mev -r input.txt -m rdns -o output.csv
+
+Or use the soon to come Webinterface
+
+Megi
+----
+Development just started, not much to see here, yet.

@@ -1,0 +1,10 @@
+# Without Nameservers
+74.125.230.80
+74.63.3
+131.159
+67
+# With Nameservers
+87.248.120.148 , ns3.yahoo.com
+204.9.163 , ns1.quiettouch.com
+74.125 , NS1.google.com
+207 , x.arin.net
