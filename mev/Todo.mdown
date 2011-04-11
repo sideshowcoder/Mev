@@ -1,11 +1,12 @@
 ESSENTIAL PRIO TODO
 ===================
+* Trial run using Redis
 
 IF THERE IS TIME TODO
 =====================
 * write Readme
 * Unify coding style: 
-  * , ; { at line start
+  * , ; { at line start unless function
   * } on ne line
 
 ESSENTIAL PRIO BUGS
