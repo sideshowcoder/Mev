@@ -1,0 +1,31 @@
+ESSENTIAL PRIO TODO
+===================
+User Controller
+---------------
+
+Job Controller
+--------------
+
+Mev Helper
+----------
+
+All views
+---------
+
+Jobs view
+---------
+
+User view
+---------
+
+IF THERE IS TIME TODO
+=====================
+
+ESSENTIAL PRIO BUGS
+===================
+
+JUST IN THERE BUGS
+==================
+
+MISSING TESTS
+=============
