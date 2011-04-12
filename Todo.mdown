@@ -1,0 +1,19 @@
+ESSENTIAL PRIO TODO
+===================
+* Deployment options
+* Create Deployment script
+
+IF THERE IS TIME TODO
+=====================
+* Write Documentation
+* Create Examples
+* Record examples as Screencast
+
+ESSENTIAL PRIO BUGS
+===================
+
+JUST IN THERE BUGS
+==================
+
+MISSING TESTS
+=============
