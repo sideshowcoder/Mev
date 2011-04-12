@@ -31,11 +31,14 @@
 	switch (ENVIRONMENT)
 	{
 		case 'development':
-			error_reporting(E_ALL);
+      date_default_timezone_set('Europe/Berlin');
+      error_reporting(E_ALL);
 		break;
 	
 		case 'testing':
+      date_default_timezone_set('Europe/Berlin');
 		case 'production':
+      date_default_timezone_set('Europe/Berlin');
 			error_reporting(0);
 		break;
 
