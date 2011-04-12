@@ -1,22 +1,26 @@
 ESSENTIAL PRIO TODO
 ===================
-User Controller
----------------
-
 Job Controller
 --------------
+* Single job view
+
+Job Model 
+---------
+* fix timestamps on add
 
 Mev Helper
 ----------
+* Implement running a job via mev
+* bind output to result 
 
 All views
 ---------
 
 Jobs view
 ---------
-
-User view
----------
+* Display all jobs by current user
+* Link Jobs to Job view
+* Single job view
 
 IF THERE IS TIME TODO
 =====================
