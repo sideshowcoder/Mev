@@ -1,6 +1,9 @@
 ESSENTIAL PRIO TODO
 ===================
+* Create new collection on start for Redis named by parameter
 * Trial run using Redis
+* Error handling of no answer returned
+* Smarter retries
 
 IF THERE IS TIME TODO
 =====================

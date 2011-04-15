@@ -2,28 +2,28 @@ ESSENTIAL PRIO TODO
 ===================
 Job Controller
 --------------
-* Single job view
+* Download result as CSV
 
 Job Model 
 ---------
-* fix timestamps on add
 
 Mev Helper
 ----------
 * Implement running a job via mev
-* bind output to result 
+* Set Start date
+* Dump result in DB
 
 All views
 ---------
 
 Jobs view
 ---------
-* Display all jobs by current user
-* Link Jobs to Job view
-* Single job view
+* Show if Job is running
 
 IF THERE IS TIME TODO
 =====================
+* Readme
+* CSS Design
 
 ESSENTIAL PRIO BUGS
 ===================
