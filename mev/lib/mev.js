@@ -12,10 +12,11 @@ var redis = require('redis'),
 		fs = require('fs'),
 		EventEmitter = require('events').EventEmitter;
 
-function Mev(mmodule, infile, debug, stat, fileoutput, selfshutdown) {
+function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, selfshutdown) {
 	
   var self = this
     , outfd
+    , dbidx
 ; self.db = null
   self.mm = mmodule
 
@@ -29,8 +30,11 @@ function Mev(mmodule, infile, debug, stat, fileoutput, selfshutdown) {
 	  self.db.on('error', function(err){ 
 		  console.log('Error' + err);
   	})
-	  // Clear DB for new resulsts
-  	self.db.flushdb()
+    // Select the right index
+    self.db.select(redisidx, function(){
+	    // Clear DB for new resulsts
+    	self.db.flushdb()
+    })
   } else {
     // Open the output file in append mode
     outfd = fs.openSync(fileoutput, 'a');

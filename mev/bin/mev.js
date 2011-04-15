@@ -37,8 +37,8 @@ var opts = [
 		name: 'stats'
 	,	string: '--stat'
 	,	help: 'show status'
-	},
-	{
+	}
+,	{
 	  name: 'requests'
 	,	string: '-r PATH, --requests=PATH'
 	,	help: 'Requests to run'
@@ -48,14 +48,17 @@ var opts = [
   , string: '-m MODUL, --module=MODUL'
   , help: 'specify module to use currently availible: rdns'
   }
-,
-  {
+, {
     name: 'output'
   , string: '-o FILEOUT, --output=FILEOUT'
   , help: 'specify output to file instead of redis, with filename'
   }
-,
-  {
+, {
+    name: 'dbidx'
+  , string: '--idx'
+  , help: 'specifiy the redis index to use to save the results'
+  }
+, {
     name: 'autoshutdown'
   , string: '--autoshutdown'
   , help: 'enable mev autoshutdown after last request, this is still really unstable!'
@@ -70,7 +73,7 @@ if (options.requests) {
   // Load and run reverse dns
   if (options.module == 'rdns') {
   	var module = new Rdns('rdns')
-	    ,	mev = new Mev(module, options.requests, options.debug, options.stats, options.output, options.autoshutdown)
+	    ,	mev = new Mev(module, options.requests, options.debug, options.stats, options.output, options.dbidx, options.autoshutdown)
     mev.start()
   }
 }
