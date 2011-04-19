@@ -9,8 +9,10 @@ class Job extends CI_controller {
     $this->load->library('tank_auth');
     //load model
     $this->load->model('job/job_model', 'jobs', TRUE);
-    //load helpers
-		$this->load->helper(array('form', 'url', 'mev'));
+    //load ci helpers
+    $this->load->helper(array('form', 'url'));
+    //load project helpers
+    $this->load->helper(array('rdns'));
   }
 
   // Index Page for Jobs Listing all Jobs by the user
