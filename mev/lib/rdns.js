@@ -146,19 +146,18 @@ function RDNS(id, timeout) {
 		}
 
 
-		
 		if(typeof(self.channels[_req['cns']]) === 'undefined') {
+      // The nameserver is not present yet
 			if(_req['reqnsl'] ) {				
+        // A nameserver list is to be requested
 				dolookup(self.channels['default']);
 			} else {
+        // The nameserver needs to be looked up afterwards the request is run
 				dnsext.getHostByName(self.channels['default'], _req['cns'], function(err, domains){
 					if(!err) {
 						_req['cns'] = domains[0];
 						self.channels[domains[0]] = dnsext.initChannelWithNs(domains[0]);
 						dolookup(self.channels[domains[0]]);
-					} else {
-            // try same request again some time later
-            setTimeout(function(){self.emit('request', req)}, _timeout + 10000 * Math.random());
 					}
 				});
 			}
