@@ -1,6 +1,6 @@
 {   "name": "mev"
   , "description": "Evented network measurements build on node"
-  , "version": "0.2.2"
+  , "version": "0.2.3"
   , "author": "Philipp Fehre <philipp.fehre@googlemail.com> (http://sideshowcoder.com)"
   , "contributors" :
   [ "Dirk Haage <dirk@haage.info> (http://dirk.haage.info/)" ]
