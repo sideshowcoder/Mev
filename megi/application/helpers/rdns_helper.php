@@ -18,9 +18,4 @@ function rdns_start($job, $infile, $outfile, $tool_path)
   return TRUE;
 }
 
-function rdns_result($job)
-{
-  return TRUE;
-}
-
 /* End rdns helper */

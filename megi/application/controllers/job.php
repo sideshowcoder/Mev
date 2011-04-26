@@ -13,7 +13,7 @@ class Job extends CI_controller {
     //load model
     $this->load->model('job/job_model', 'jobs', TRUE);
     //load ci helpers
-    $this->load->helper(array('form', 'url'));
+    $this->load->helper(array('form', 'url', 'download'));
     //load project helpers
     $this->load->helper(array('rdns'));
   }
@@ -64,9 +64,9 @@ class Job extends CI_controller {
   // Handle Job
   function start($id)
   {
-    $job = $this->jobs->find($id);
+    $job = $this->jobs->find_for_user($id);
     // Check if job belongs to current user
-    if($job->user_id == $this->tank_auth->get_user_id())
+    if($job)
     {
       // Check if type is availible and run
       if(array_key_exists($job->type, $this->config->item('modules')))
@@ -109,7 +109,33 @@ class Job extends CI_controller {
 
   function result($id)
   {
-    
+    $job = $this->jobs->find_for_user($id);
+    // Job needs to be started
+    if($job && $job->start_date != '0000-00-00 00:00:00')
+    {
+      $data = file_get_contents($this->config->item('result_path').'/'.$job->id.'.res');
+      $name = $job->type.'_'.$job->id.'_result.csv';
+      force_download($name, $data);
+    }
+    else
+    {
+      echo $job->id.' not started yet';
+    }
+  }
+
+  function spec($id)
+  {
+    $job = $this->jobs->find_for_user($id);
+    if($job)
+    {
+      $data = $job->spec;
+      $name = $job->type.'_'.$job->id.'_spec.csv';
+      force_download($name, $data);
+    }
+    else
+    {
+      redirect('job');
+    }
   }
 
 

@@ -5,10 +5,8 @@ class Job_model extends CI_Model {
   // Model Data
   var $type = '';
   var $spec = '';
-  var $result = '';
   var $add_date = '';
   var $start_date = '';
-  var $end_date = '';
   var $user_id = '';
 
   // Overwrite contructor to load helpers
@@ -41,6 +39,13 @@ class Job_model extends CI_Model {
   function find($id)
   {
     $query = $this->db->get_where('jobs', array('id' => $id), 1);
+    return $query->row();
+  }
+
+  //find job and check if it belongs to the current user
+  function find_for_user($id)
+  {
+    $query = $this->db->get_where('jobs', array('id' => $id, 'user_id' => $this->tank_auth->get_user_id()), 1);
     return $query->row();
   }
 
