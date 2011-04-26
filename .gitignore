@@ -1,2 +1,4 @@
 megi/application/logs/*
+megi/result/*.res
+megi/spec/*.spec
 

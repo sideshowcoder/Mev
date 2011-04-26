@@ -1,29 +1,24 @@
 ESSENTIAL PRIO TODO
 ===================
-Job Controller
---------------
-* Download result as CSV
+* Status display in job view when job was started
+* Error display in job view when job start failed
+* Install script
 
-Job Model 
----------
-
-Mev Helper
-----------
-* Implement running a job via mev
-* Set Start date
-* Dump result in DB
-
-All views
----------
-
-Jobs view
----------
-* Show if Job is running
 
 IF THERE IS TIME TODO
 =====================
 * Readme
 * CSS Design
+* Make dynamic
+* Add growl support to jobs
+  * DB
+    * growlhost 
+    * growlpass
+    * growl
+  * Form
+    * growlhost 
+    * growlpass
+    * growl
 
 ESSENTIAL PRIO BUGS
 ===================
