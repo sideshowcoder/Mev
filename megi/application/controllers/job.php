@@ -88,6 +88,7 @@ class Job extends CI_controller {
         if($start_func($job, $specfile, $resfile, $tool_path))
         {
           //job started
+          $this->jobs->set_start_date($id);
           echo $job->type.' job started';
         }
         else 

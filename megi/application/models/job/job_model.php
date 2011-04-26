@@ -44,6 +44,11 @@ class Job_model extends CI_Model {
     return $query->row();
   }
 
+  function set_start_date($id)
+  {
+    $this->db->update('jobs', array('start_date' => date('Y-m-d H:i:s')), array('id' => $id));
+  }
+
 }
 
 /* End Jobmodel */
