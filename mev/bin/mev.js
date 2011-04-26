@@ -14,6 +14,7 @@
 
 // Get libs for command line parsing and mev
 var nomnom = require('nomnom')
+  , nodrrr = require('nodrrr')
 	,	Mev = require('../lib/mev')
   ,	Rdns = require('../lib/rdns')
 
@@ -63,24 +64,60 @@ var opts = [
   , string: '--autoshutdown'
   , help: 'enable mev autoshutdown after last request, this is still really unstable!'
   }
+, {
+    name: 'growl'
+  , string: '--growl'
+  , help: 'turn on growl support'
+  }
+, {
+    name: 'growlhost'
+  , string: '--growlhost'
+  , help: 'Host to sent growl notifications to defaults to localhost'
+  }
+, {
+    name: 'growlpass'
+  , string: '--growlpass'
+  , help: 'Host remote growl password defaults to empty'
+  }
+
 ]
 
 // Parse opts
 var options = nomnom.parseArgs(opts)
 
+
 // Init
 if (options.requests) {
+  if(options.growl){
+    // Growl specs
+    var host = options.growlhost || 'localhost'
+      , app = 'mev'
+      , all = ['Mev status']
+      , def = ['Mev status']
+      , pass = options.growlpass || null
+    // Setup
+    var growl = new nodrrr.Nodrrr(host, app, all, def, pass);
+    // Register
+    growl.register()
+  }
   // Load and run reverse dns
-  if (options.module == 'rdns') {
-  	var module = new Rdns('rdns')
+  if(options.module == 'rdns') {
+    var module = new Rdns('rdns')
 	    ,	mev = new Mev(module, options.requests, options.debug, options.stats, options.output, options.dbidx, options.autoshutdown)
-    mev.start()
+    if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false)
+  ; mev.start()
+    // Done without auto shutdown
+    if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver done', 0, false)
+  ; process.exit(0);
   }
 }
 
 mev.on('shutdown', function(){
-  process.exit(0);
-});
+  // Done using auto shutdown
+  if(options.growl) growl.notify('Mev stop', 'Mev RDNS resolver', 'RDNS resolver done', 0, false)
+; process.exit(0);
+})
+
 // END WRAPPER
 })()
 
