@@ -106,9 +106,6 @@ if (options.requests) {
 	    ,	mev = new Mev(module, options.requests, options.debug, options.stats, options.output, options.dbidx, options.autoshutdown)
     if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false)
   ; mev.start()
-    // Done without auto shutdown
-    if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver done', 0, false)
-  ; process.exit(0);
   }
 }
 

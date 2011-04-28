@@ -52,7 +52,7 @@ function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, selfshutdown) {
 	
 	// Data input to module
 	this.dataInput = function(data){
-		logger('dataInput: ', data);
+		logger('dataInput: ', data)
 		// Split the data by lines each line specifies a request 
 		data.toString().split('\n').forEach(function(el, idx, ary){
 			// Check if line is comment or empty
@@ -63,11 +63,11 @@ function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, selfshutdown) {
 	this.regEvents = function(){
 		logger('registering events');
 		// Add listener for programm flow
-		self.mm.on('data', function(data) { self.genReq(data) });
-		self.mm.on('request', function(req) { self.runReq(req) });
-		self.mm.on('result', function(res) { self.handleRes(res) });        
+		self.mm.on('data', self.genReq);
+		self.mm.on('request', self.runReq);
+		self.mm.on('result', self.handleRes);        
 		// Trigger to communicate with other Mev instances
-		self.mm.on('done', function(res) { self.finishRes(res) });
+		self.mm.on('done', self.finishRes);
 	};
 	
 	// Finished Request
