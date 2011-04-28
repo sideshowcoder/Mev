@@ -114,12 +114,26 @@ class Job extends CI_controller {
     if($job && $job->start_date != '0000-00-00 00:00:00')
     {
       $data = file_get_contents($this->config->item('result_path').'/'.$job->id.'.res');
-      $name = $job->type.'_'.$job->id.'_result.csv';
+      if($job->name)
+      {
+        $name = $job->name.'_result.csv';
+      }
+      else
+      {
+        $name = $job->type.'_'.$job->id.'_result.csv';
+      }
       force_download($name, $data);
     }
     else
     {
-      echo $job->id.' not started yet';
+      if($job->name)
+      {
+        echo $job->name.' not started yet';
+      }
+      else
+      {
+        echo $job->id.' not started yet';
+      }
     }
   }
 
@@ -128,14 +142,19 @@ class Job extends CI_controller {
     $job = $this->jobs->find_for_user($id);
     if($job)
     {
-      $data = $job->spec;
-      $name = $job->type.'_'.$job->id.'_spec.csv';
-      force_download($name, $data);
+      $data['job'] = $job;
     }
     else
     {
       redirect('job');
     }
+    // Get Spec
+    $data['spec'] = file_get_contents($this->config->item('spec_path').'/'.$job->id.'.spec');
+
+    // Create page
+    $this->load->view('header');
+    $this->load->view('job/spec', $data);
+    $this->load->view('footer');
   }
 
 

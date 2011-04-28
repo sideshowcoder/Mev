@@ -4,6 +4,7 @@ class Job_model extends CI_Model {
 
   // Model Data
   var $type = '';
+  var $name = '';
   var $spec = '';
   var $add_date = '';
   var $start_date = '';
@@ -22,6 +23,7 @@ class Job_model extends CI_Model {
   {
     $this->type = $this->input->post('jobtype');
     $this->spec = $this->input->post('jobspec');
+    $this->name = $this->input->post('jobname');
     $this->add_date = date('Y-m-d H:i:s');
     $this->user_id = $this->tank_auth->get_user_id();
 
