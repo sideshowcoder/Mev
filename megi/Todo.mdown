@@ -2,6 +2,10 @@ ESSENTIAL PRIO TODO
 ===================
 * Status display in job view when job was started
 * Error display in job view when job start failed
+* Add Job naming
+  * name in DB
+  * use name for download result
+* Display spec via HTML view
 * Install script
 
 
