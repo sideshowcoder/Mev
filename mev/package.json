@@ -1,22 +1,21 @@
-{   "name": "mev"
-  , "description": "Evented network measurements build on node"
-  , "version": "0.2.3"
-  , "author": "Philipp Fehre <philipp.fehre@googlemail.com> (http://sideshowcoder.com)"
-  , "contributors" :
-  [ "Dirk Haage <dirk@haage.info> (http://dirk.haage.info/)" ]
-  , "homepage" : "http://measr.net/"
-  , "keywords": ["network", "measurments", "istrukta"]
-  , "directories" : { "example" : "./example"
-                    , "test" : "./test"
-                    , "lib" : "./lib"
-                    , "bin" : "./bin"
-                    }
-  , "main": "mev"
-  , "scripts": { "test": "expresso" }
-  , "devDependencies": { "expresso": "" }
-  , "dependencies" :  { "redis": ""
-                      , "nomnom": ""
-                      , "nodrrr": ""
-                      }
-  , "engines": { "node": "0.3 || 0.4" }
+{ "name": "mev",
+  "description": "Evented network measurements build on node",
+  "version": "0.2.3",
+  "author": "Philipp Fehre <philipp.fehre@googlemail.com> (http://sideshowcoder.com)",
+  "contributors" : [ "Dirk Haage <dirk@haage.info> (http://dirk.haage.info/)" ],
+  "homepage" : "http://measr.net/",
+  "keywords": ["networkork", "measurments", "istrukta"],
+  "directories" : { "example" : "./example",
+                    "test" : "./test",
+                    "lib" : "./lib",
+                    "bin" : "./bin",
+                  },
+  "main": "mev",
+  "scripts": { "test": "expresso" },
+  "devDependencies": { "expresso": "" },
+  "dependencies":  { "redis": "",
+                      "nomnom": "",
+                      "nodrrr": "",
+                    },
+  "engines": { "node": "0.3 || 0.4" }
 }
