@@ -8,14 +8,14 @@
   "directories" : { "example" : "./example",
                     "test" : "./test",
                     "lib" : "./lib",
-                    "bin" : "./bin",
+                    "bin" : "./bin"
                   },
   "main": "mev",
   "scripts": { "test": "expresso" },
-  "devDependencies": { "expresso": "" },
-  "dependencies":  { "redis": "",
-                      "nomnom": "",
-                      "nodrrr": "",
-                    },
+  "devDependencies": { "expresso": "*",
+                       "should": "*" },
+  "dependencies":  { "redis": "*",
+                      "nomnom": "*",
+                      "nodrrr": "*" },
   "engines": { "node": "0.3 || 0.4" }
 }

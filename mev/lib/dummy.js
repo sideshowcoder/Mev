@@ -50,7 +50,7 @@ function Dummy(id) {
 		} else {
 			var data = { data: result.result };
       done = true;
-			that.emit('data', data);‚
+			that.emit('data', data);
 		}
 	};
 };

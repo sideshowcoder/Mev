@@ -30,7 +30,7 @@ module.exports = {
 	  var dummy = new Dummy('dummy'),
 	      mev = new Mev (dummy, __dirname + '/data/dummyinput.lst');
 	  dummy.on('data', function(data){
-      data.should.eql({'data':1});
+      data.should.eql({ data:1 });
     });
     mev.dataInput("1");
     mev.stop();
@@ -42,7 +42,7 @@ module.exports = {
 	  dummy.on('data', function(data){
       data.should.be.a('object').and.have.ownProperty('data');
       data.should.not.eql({ data:'#' });
-      data.should.not.be.empty;
+      data.should.not.eql( undefined );
     });
     mev.readData();
     mev.stop()

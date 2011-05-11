@@ -47,7 +47,7 @@ function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, thatshutdown) {
 		logger('reading ', infile);
 		fs.readFile(infile, 'utf8', function(err, data){
 			if(err) throw err;
-			that.dataInput(data)
+			that.dataInput(data);
 		});
 	};
 	
@@ -75,7 +75,7 @@ function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, thatshutdown) {
 	that.finishRes = function(res){
 		logger('finishResult: ', res)
     if(!fileoutput) {
-  		that.db.set(res.key., res.value, function(){
+  		that.db.set(res.key, res.value, function(){
 	  			that.emit('finish', res);
 		  })
     } else {

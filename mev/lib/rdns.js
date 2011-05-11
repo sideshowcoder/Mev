@@ -20,7 +20,7 @@ function RDNS(id, timeout) {
 	    
   that.id = id;
 	that.channels = {};
-  that.channels['default'] = dnsext.initChannelWithNs();
+  that.channels.main = dnsext.initChannelWithNs();
 	// Default timeout is 5 sek
 	(timeout) ? _timeout = timeout : _timeout = 5000;
 	
@@ -65,7 +65,7 @@ function RDNS(id, timeout) {
 	
 		// Create correct request
 		if(data.nsl){
-      iplength = d.ip.split('.').length
+      iplength = data.ip.split('.').length
 			if(iplength == 4) {
 				d = {
 				  ip: data.ip,
@@ -81,7 +81,7 @@ function RDNS(id, timeout) {
 					d = {
 						ip: data.ip + '.' + i,
 						cns: data.cns,
-						nsl: d.nsl,
+						nsl: data.nsl,
 						reqnsl: true
 					}
 					that.emit('data', d)
@@ -142,15 +142,14 @@ function RDNS(id, timeout) {
 			}
 		};
 
-
-		if(typeof(that.channels[req.cns]) === undefined) {
+		if(typeof(that.channels[req.cns]) === 'undefined') {
       // The nameserver is not present yet
 			if(req.reqnsl ) {				
         // A nameserver list is to be requested
-				dolookup(that.channels.default);
+				dolookup(that.channels.main);
 			} else {
         // The nameserver needs to be looked up afterwards the request is run
-				dnsext.getHostByName(that.channels.default, req.cns, function(err, domains){
+				dnsext.getHostByName(that.channels.main, req.cns, function(err, domains){
 					if(!err) {
 						req.cns = domains[0];
 						that.channels[domains[0]] = dnsext.initChannelWithNs(domains[0]);
