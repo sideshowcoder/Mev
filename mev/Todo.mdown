@@ -1,20 +1,14 @@
 ESSENTIAL PRIO TODO
 ===================
-* Create new collection on start for Redis named by parameter
-* Trial run using Redis
-* Error handling of no answer returned
-* Smarter retries
+* Add testcase for Bug 1
 
 IF THERE IS TIME TODO
 =====================
 * write Readme
-* Unify coding style: 
-  * , ; { at line start unless function
-  * } on ne line
 
 ESSENTIAL PRIO BUGS
 ===================
-* Don't use same DNS Server all the way down, request new for every net
+1 Don't use same DNS Server all the way down, request new for every net
 
 JUST IN THERE BUGS
 ==================
