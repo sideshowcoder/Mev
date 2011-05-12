@@ -1,6 +1,5 @@
 ESSENTIAL PRIO TODO
 ===================
-* Add testcase for Bug 1
 
 IF THERE IS TIME TODO
 =====================
@@ -8,10 +7,14 @@ IF THERE IS TIME TODO
 
 ESSENTIAL PRIO BUGS
 ===================
-1 Don't use same DNS Server all the way down, request new for every net
 
 JUST IN THERE BUGS
 ==================
 
 MISSING TESTS
 =============
+
+RESOLVED
+========
+1 Don't use same DNS Server all the way down, request new for every net
+

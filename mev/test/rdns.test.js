@@ -55,10 +55,10 @@ module.exports = {
           nsl: ['8.8.4.4'], 
         }
 
-    rdns.on('data', function(data){
-      data.ip.should.match(outdata.ip);
-      data.cns.should.eql(outdata.cns);
-      data.nsl.should.eql(outdata.nsl);
+    rdns.on('request', function(request){
+      request.ip.should.match(outdata.ip);
+      request.cns.should.eql(outdata.cns);
+      request.nsl.should.eql(outdata.nsl);
     });
 
     rdns.genReq(indata); 
@@ -77,8 +77,8 @@ module.exports = {
           ip: /131\.159\.(\d{1,3})/,
           cns: '8.8.4.4', 
           nsl: ['8.8.4.4'], 
-					reqnsl: false,
-					ptr: true,
+					reqnsl: true,
+					ptr: false,
 				};
 
     rdns.on('request', function(request){
@@ -129,13 +129,6 @@ module.exports = {
           cns: '8.8.4.4', 
           nsl: ['8.8.4.4', '8.8.8.8'], 
         },
-        outdata = {
-          ip: '131.159.20.143', 
-          cns: '8.8.8.8', 
-          nsl: ['8.8.4.4', '8.8.8.8'], 
-					reqnsl: false,
-					ptr: true
-				},
         req = {
           ip: '131.159.20.143', 
           cns: '8.8.4.4', 
@@ -152,14 +145,6 @@ module.exports = {
       request.ptr.should.eql(req.ptr);
     });
 
-    rdns.on('data', function(data){
-      data.ip.should.eql(outdata.ip);
-      data.cns.should.eql(outdata.cns);
-      data.nsl.should.eql(outdata.nsl);
-      data.reqnsl.should.eql(outdata.reqnsl);
-      data.ptr.should.eql(outdata.ptr);
-    });
-
     rdns.genReq(indata); 
   },
 	
@@ -171,9 +156,11 @@ module.exports = {
           'ptr': false, 
         },
 				req = {
-					'ip': '131.159',
-					'reqnsl': true,
-					'ptr': false,
+					ip: '131.159',
+					cns: undefined,
+					nsl: undefined,
+					reqnsl: true,
+					ptr: false,
 				};
 
     rdns.on('request', function(request){
@@ -186,11 +173,11 @@ module.exports = {
   'test run request pointer': function(){
     var rdns = new RDNS('rdns'),
         request = { 
-          'ip': '131.159.20.143', 
-          'cns': '131.159.14.206', 
-          'nsl': ['131.159.20.206'], 
-					'reqnsl': false,
-					'ptr': true
+          ip: '131.159.20.143', 
+          cns: '131.159.14.206', 
+          nsl: ['131.159.20.206'], 
+					reqnsl: false,
+					ptr: true,
 			  };
 
     rdns.on('result', function(result){
@@ -227,23 +214,23 @@ module.exports = {
   },
 
   'test run request multiple nameservers cancel timeout on resolve': function(){
-    var rdns = new RDNS('rdns')
-      , request = { 
-            'ip': '131'
-          , 'cns': '8.8.8.8'
-          , 'nsl': ['8.8.8.8', '8.8.4.4']
-		  		,	'reqnsl': true
-			  	,	'ptr': false
-        }
-      , expected = { 
-          'req': { 
-              'ip': '131'
-            , 'cns': '8.8.8.8'
-            , 'nsl': ['8.8.8.8', '8.8.4.4']
-            , 'reqnsl': true
-            , 'ptr': false 
+    var rdns = new RDNS('rdns'),
+        request = { 
+          ip: '131',
+          cns: '8.8.8.8',
+          nsl: ['8.8.8.8', '8.8.4.4'],
+		  		reqnsl: true,
+			  	ptr: false
+        },
+        expected = { 
+          req: { 
+            ip: '131',
+            cns: '8.8.8.8',
+            nsl: ['8.8.8.8', '8.8.4.4'],
+            reqnsl: true,
+            ptr: false 
           }
-      }
+        };
 
     rdns.on('request', function(req){
       //intentionally fails because the timeout should be canceled so this should 
@@ -323,5 +310,82 @@ module.exports = {
     });
     
     rdns.handleRes(result); 
+  },
+  
+  // BUG 1 Don't use same DNS Server all the way down, request new for every net
+  'BUG 1 Dont use same DNS Server all the way down the chain CASE 1 no ns for new subnet': function(){
+    var rdns = new RDNS('rdns');
+        input = {
+          ip: '131.159.1',
+          cns: 'internaldns1.informatik.tu-muenchen.de',
+          nsl: ['internaldns1.informatik.tu-muenchen.de'],
+          reqnsl: true,
+          ptr: false          
+        };
+    // wire
+    rdns.on('result', rdns.handleRes);
+    // test
+    rdns.on('data', function(data){
+      // This should never be called, because we don't have a subnet here
+      false.should.be.ok;
+    })
+    rdns.runReq(input);    
+  },
+  
+  'BUG 1 Dont use same DNS Server all the way down the chain CASE 2 new ns for new subnet': function(){
+    var rdns = new RDNS('rdns');    
+        input = {
+          ip: '131.159.20',
+          cns: 'internaldns1.informatik.tu-muenchen.de',
+          nsl: ['internaldns1.informatik.tu-muenchen.de'],
+          reqnsl: true,
+          ptr: false          
+        },
+        result = {
+          ip: '131.159.20',
+          cns: 'a.ns.20.159.131.in-addr.arpa',
+          nsl: ['a.ns.20.159.131.in-addr.arpa'],
+          reqnsl: false,
+          ptr: false
+        };
+      // wire
+    rdns.on('result', rdns.handleRes);
+    // test
+    rdns.on('data', function(data){
+      data.should.eql(result);
+    })
+    rdns.runReq(input);        
   }
+  
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

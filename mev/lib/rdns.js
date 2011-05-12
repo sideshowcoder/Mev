@@ -64,7 +64,7 @@ function RDNS(id, timeout) {
 		    d;
 	
 		// Create correct request
-		if(data.nsl){
+		if(data.nsl && !data.reqnsl){
       iplength = data.ip.split('.').length
 			if(iplength == 4) {
 				d = {
@@ -82,14 +82,17 @@ function RDNS(id, timeout) {
 						ip: data.ip + '.' + i,
 						cns: data.cns,
 						nsl: data.nsl,
-						reqnsl: true
+						reqnsl: true,
+						ptr: false
 					}
-					that.emit('data', d)
+					that.emit('request', d)
 				}
 			}
     } else {
 			d = {
 			  ip: data.ip,
+			  cns: data.cns,
+				nsl: data.nsl,
 				reqnsl: true,
 				ptr: false
 			}
@@ -172,7 +175,7 @@ function RDNS(id, timeout) {
 		if(req.ptr && !err){
 		  that.finishRes({result: { key:req.ip, value:res}})
     }
-    if(req.reqnsl && !err){
+    if(req.reqnsl && !err){ // FIXME dont we also need to make sure that a result is present?
 			data = {
         ip: req.ip,
 			  cns: res[0],
@@ -186,7 +189,7 @@ function RDNS(id, timeout) {
 }
 
 // Extend EventEmitter
-RDNS.prototype = new EventEmitter
+RDNS.prototype = new EventEmitter;
 
 // Export
-module.exports = RDNS
+module.exports = RDNS;
