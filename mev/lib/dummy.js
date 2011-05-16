@@ -53,9 +53,9 @@ function Dummy(id) {
 			that.emit('data', data);
 		}
 	};
-};
+}
 
-// Extend EventEmitter‚
+// Extend EventEmitter
 Dummy.prototype = new EventEmitter;
 
 // Export
