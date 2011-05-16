@@ -12,28 +12,29 @@ var redis = require('redis'),
 		fs = require('fs'),
 		EventEmitter = require('events').EventEmitter;
 
-function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, selfshutdown) {
+function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, thatshutdown) {
 	
-  var self = this
-    , outfd
-    , dbidx
-; self.db = null
-  self.mm = mmodule
+  var that = this,
+      outfd,
+      dbidx;
+      
+  that.db = null;
+  that.mm = mmodule;
 
-  // If selfshutdown is turned of set count to 1 and it will not be modified
-; (selfshutdown) ? self.active_req_count = 0 : self.active_req_count = -1
-	/*	Get DB connection this should be accessible from the outside 
-		so it is exported with the module to be used in the caller */ 
+  // If thatshutdown is turned of set count to 1 and it will not be modified
+  (thatshutdown) ? that.active_req_count = 0 : that.active_req_count = -1;
 
+	// Get DB connection this should be accessible from the outside 
+	// so it is exported with the module to be used in the caller
 	if(!fileoutput) {
-    self.db = redis.createClient()
-	  self.db.on('error', function(err){ 
+    that.db = redis.createClient();
+	  that.db.on('error', function(err){ 
 		  console.log('Error' + err);
   	})
     // Select the right index
-    self.db.select(redisidx, function(){
+    that.db.select(redisidx, function(){
 	    // Clear DB for new resulsts
-    	self.db.flushdb()
+    	that.db.flushdb();
     })
   } else {
     // Open the output file in append mode
@@ -42,122 +43,122 @@ function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, selfshutdown) {
 
 	
 	// Read the input file
-	this.readData = function(){
-		logger('reading ', infile)
+	that.readData = function(){
+		logger('reading ', infile);
 		fs.readFile(infile, 'utf8', function(err, data){
-			if(err) throw err
-		;	self.dataInput(data)
+			if(err) throw err;
+			that.dataInput(data);
 		});
 	};
 	
 	// Data input to module
-	this.dataInput = function(data){
-		logger('dataInput: ', data)
+	that.dataInput = function(data){
+		logger('dataInput: ', data);
 		// Split the data by lines each line specifies a request 
 		data.toString().split('\n').forEach(function(el, idx, ary){
 			// Check if line is comment or empty
-			if(	el.indexOf('#') == -1 && el.trim().valueOf() != '') self.mm.readInput(el);
+			if(	el.indexOf('#') == -1 && el.trim().valueOf() != '') that.mm.readInput(el);
 		});
 	};
 	
-	this.regEvents = function(){
+	that.regEvents = function(){
 		logger('registering events');
 		// Add listener for programm flow
-		self.mm.on('data', self.genReq);
-		self.mm.on('request', self.runReq);
-		self.mm.on('result', self.handleRes);        
+		that.mm.on('data', that.genReq);
+		that.mm.on('request', that.runReq);
+		that.mm.on('result', that.handleRes);        
 		// Trigger to communicate with other Mev instances
-		self.mm.on('done', self.finishRes);
+		that.mm.on('done', that.finishRes);
 	};
 	
 	// Finished Request
-	this.finishRes = function(res){
+	that.finishRes = function(res){
 		logger('finishResult: ', res)
     if(!fileoutput) {
-  		self.db.set(res['key'], res['value'], function(){
-	  			self.emit('finish', res)
+  		that.db.set(res.key, res.value, function(){
+	  			that.emit('finish', res);
 		  })
     } else {
-      fs.writeSync(outfd, res['key'] + ', ' + res['value'] + '\n')
-      self.emit('finish', res)
+      fs.writeSync(outfd, res.key + ', ' + res.value + '\n')
+      that.emit('finish', res);
     }
     // Attempt shutdown if all request are run
-    if(!self.active_req_count) setTimeout(self.stop(), 2000)
+    if(!that.active_req_count) setTimeout(that.stop(), 2000);
 	};
 	
 	
 	// Generate Requests
-	this.genReq = function(data){
+	that.genReq = function(data){
     autoshutdown(1);
-    logger('genReq: ', data)
-		self.mm.genReq(data)
+    logger('genReq: ', data);
+		that.mm.genReq(data);
 	};
 	
 	// Run Requests
-	this.runReq = function(req){
-		logger('runReq: ', req)
-		self.mm.runReq(req)
-	}
+	that.runReq = function(req){
+		logger('runReq: ', req);
+		that.mm.runReq(req);
+	};
 	
 	// Handle results
-	this.handleRes = function(res){
-    autoshutdown(-1)
-    status()
-		logger('handleRes: ', res)
-		self.mm.handleRes(res)
-	}
+	that.handleRes = function(res){
+    autoshutdown(-1);
+    status();
+		logger('handleRes: ', res);
+		that.mm.handleRes(res);
+	};
 	
 	/*** Start mev ***/
-	this.start = function(){
+	that.start = function(){
 		logger('starting mev');
 		// Events
-		self.regEvents();
-		self.readData();
+		that.regEvents();
+		that.readData();
 	};	
 
 	/*** Helpers ***/ 
 	function logger(desc, obj) {
 		if(debug) { 
-			if(typeof(obj) === 'undefined'){
+			if(typeof(obj) === undefined){
 				console.log(desc);
 			} else {
 				console.log(desc + sys.inspect(obj));
 			}
 		}
-	}
+	};
 	
   function autoshutdown(count){
-    if(selfshutdown) {
-      self.active_req_count += count
+    if(thatshutdown) {
+      that.active_req_count += count;
     }
-  }
+  };
 
 	function status() {
 		if(stat) {
-			console.log('currently active requests: ' + self.active_req_count)
+			console.log('currently active requests: ' + that.active_req_count);
 		}
-	}
+	};
 	
-	this.stop = function(){
+	that.stop = function(){
     // Only shutdown if requests are all handled
-    if(!self.active_req_count) {
-      logger('deregistering events')
-      self.mm.removeAllListeners('data')
-      self.mm.removeAllListeners('request')
-      self.mm.removeAllListeners('result')
-      self.mm.removeAllListeners('done')
-      if(self.db) {
-        logger('closing database connection')
-        setTimeout(self.db.end(), 2000)
+    if(!that.active_req_count) {
+      logger('deregistering events');
+      that.mm.removeAllListeners('data');
+      that.mm.removeAllListeners('request');
+      that.mm.removeAllListeners('result');
+      that.mm.removeAllListeners('done');
+      if(that.db) {
+        logger('closing database connection');
+        setTimeout(that.db.end(), 2000);
       }
       if(outfd) {
-        logger('closing file')
-        fs.closeSync(outfd)
+        logger('closing file');
+        fs.closeSync(outfd);
       }
-      logger('shut down')
-      self.emit('shutdown')
+      logger('shut down');
+      that.emit('shutdown');
     }
-	}
+	};
 }
 
 // Extend EventEmitter

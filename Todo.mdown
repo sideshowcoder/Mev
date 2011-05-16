@@ -1,6 +1,6 @@
 ESSENTIAL PRIO TODO
 ===================
-* Deployment options
+* Research deployment options
 * Create Deployment script
 
 IF THERE IS TIME TODO
