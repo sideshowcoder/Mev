@@ -1,4 +1,3 @@
-<!-- Navigation -->
 <div id='nav'>
 <ul>
 <li><?php echo anchor('/auth/logout/', 'Logout'); ?></li>
@@ -7,7 +6,6 @@
 </div>
 
 
-<!-- Content -->
 <div id='content'>
 <strong><?php echo $username; ?></strong> is currently logged in
 </div>
