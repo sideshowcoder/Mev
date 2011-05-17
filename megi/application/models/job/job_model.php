@@ -29,6 +29,7 @@ class Job_model extends CI_Model {
 
     // insert in db
     $this->db->insert('jobs', $this);
+    return $this;
   }
 
   // Get the jobs for user
