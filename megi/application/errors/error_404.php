@@ -1,34 +1,28 @@
-<html>
-<head>
+<!doctype html>
 <title>404 Page Not Found</title>
-<style type="text/css">
-
-body {
-background-color:	#fff;
-margin:				40px;
-font-family:		Lucida Grande, Verdana, Sans-serif;
-font-size:			12px;
-color:				#000;
-}
-
-#content  {
-border:				#999 1px solid;
-background-color:	#fff;
-padding:			20px 20px 12px 20px;
-}
-
-h1 {
-font-weight:		normal;
-font-size:			14px;
-color:				#990000;
-margin:				0 0 4px 0;
-}
+<style>
+  body { text-align: center;}
+  #content  {border: #999 1px solid; background-color: #fff; padding: 20px 20px 12px 20px;}
+  h1 { font-size: 50px; text-align: center }
+  span[frown] { transform: rotate(90deg); display:inline-block; color: #bbb; }
+  body { font: 20px Constantia, 'Hoefler Text',  "Adobe Caslon Pro", Baskerville, Georgia, Times, serif; color: #999; text-shadow: 2px 2px 2px rgba(200, 200, 200, 0.5); }
+  ::-moz-selection{ background:#FF5E99; color:#fff; }
+  ::selection { background:#FF5E99; color:#fff; } 
+  article {display:block; text-align: left; width: 500px; margin: 0 auto; }  
+  a { color: rgb(36, 109, 56); text-decoration:none; }
+  a:hover { color: rgb(96, 73, 141) ; text-shadow: 2px 2px 2px rgba(36, 109, 56, 0.5); }
 </style>
-</head>
-<body>
-	<div id="content">
-		<h1><?php echo $heading; ?></h1>
-		<?php echo $message; ?>
-	</div>
-</body>
+
+<article>
+   <h1>Not found <span frown>:(</span></h1>
+   <div id="content">
+ 		 <h1><?php echo $heading; ?></h1>
+ 		  <?php echo $message; ?>
+ 	  </div>  
+    <script>
+    var GOOG_FIXURL_LANG = (navigator.language || '').slice(0,2),
+        GOOG_FIXURL_SITE = location.host;
+    </script>
+    <script src="http://linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js"></script>
+</article>
 </html>

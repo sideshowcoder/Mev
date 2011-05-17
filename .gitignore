@@ -5,3 +5,4 @@ mev/node_modules
 mev/npm-debug.log
 mev/test/testoutput.out
 mev/tryout
+.DS_Store

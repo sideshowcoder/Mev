@@ -13,7 +13,7 @@ class Job extends CI_controller {
     //load model
     $this->load->model('job/job_model', 'jobs', TRUE);
     //load ci helpers
-    $this->load->helper(array('form', 'url', 'download'));
+    $this->load->helper(array('form', 'download'));
     //load project helpers
     $this->load->helper(array('rdns'));
   }
