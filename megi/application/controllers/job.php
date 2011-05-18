@@ -27,10 +27,10 @@ class Job extends CI_controller {
     {
       redirect('/');
     }
-    // Inject error if not present to handle views trying to display it
-    if(!isset($data['error']))
+    // Inject flash if not present to handle views trying to display it
+    if(!isset($data['flash']))
     {
-      $data['error'] = false;
+      $data['flash'] = false;
     }
     // create output
     if(strstr(current_url(), $match))
@@ -41,7 +41,7 @@ class Job extends CI_controller {
     }
     else
     {
-      $this->load->view('header');
+      $this->load->view('header', $data);
       foreach($templates as $template)
       {
         $this->load->view($template, $data);
@@ -137,12 +137,12 @@ class Job extends CI_controller {
         }
         else 
         {
-          $data['error'] = 'start failed';
+          $data['flash'] = 'start failed';
         }
       } 
       else 
       {
-        $data['error'] = 'module not available failed';
+        $data['flash'] = 'module not available failed';
       }
     } 
     $this->_serve_with_templates($data, array('job/view'));

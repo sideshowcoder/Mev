@@ -9,11 +9,6 @@
 
 </table>
 
-<?php if($error): ?>
-  <p><?php echo "Error: ".$error;?></p>
-<?php endif; ?>
-
-
 <?php if($job->start_date == '0000-00-00 00:00:00'): ?>
   <p><?php echo anchor("job/start/$job->id", 'Start this Job', 'title="Start"');?></p>
 <?php else: ?>
