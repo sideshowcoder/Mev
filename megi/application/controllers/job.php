@@ -2,7 +2,6 @@
 
 class Job extends CI_controller {
   
-  // Overwrite contructor
   function __construct()
   {
     parent::__construct();
@@ -17,53 +16,82 @@ class Job extends CI_controller {
     //load project helpers
     $this->load->helper(array('rdns'));
   }
-
-  // Index Page for Jobs Listing all Jobs by the user
-  // Request JSON: http://megi.local/index.php/job/index/all.json
-  function index()
+  
+  /*
+   * Serve Data as JSON or HTML depending on the request
+   */
+  private function _serve_with_templates($data, $templates, $match = '.json')
   {
-    // Availibel Jobs for the current user
-    $data['jobs'] = $this->jobs->get_for_current_user();
-
-    // Possible job types
-    $data['types'] = $this->config->item('modules');
-
-    // Serve JSON if requested
-    if(strstr(current_url(), 'all.json'))
+    // If no data is passed we want to redirect home because there is something wrong
+    if(is_null($data))
+    {
+      redirect('/');
+    }
+    // Inject error if not present to handle views trying to display it
+    if(!isset($data['error']))
+    {
+      $data['error'] = false;
+    }
+    // create output
+    if(strstr(current_url(), $match))
     {
       $this->output
         ->set_content_type('application/json')
         ->set_output(json_encode($data));
     }
-    // Serve HTML 
-    else 
+    else
     {
-      // Create page
       $this->load->view('header');
-      $this->load->view('job/_form', $data);
-      $this->load->view('job/list', $data);
+      foreach($templates as $template)
+      {
+        $this->load->view($template, $data);
+      }
       $this->load->view('footer');
     }
   }
 
-  // Create a Job
-  function create()
+  /* 
+   * Index Page for Jobs Listing all Jobs by the current user
+   * GET
+   * JSON: http://megi.local/index.php/job/index/all.json
+   * HTML: http://megi.local/index.php/job/index
+   */
+  function index()
   {
-    $job = $this->jobs->create();
-    if(strstr(current_url(), 'all.json'))
-    {
-      $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode($job));
-    }
-    // Serve HTML 
-    else 
-    {
-      redirect('job/view/'.$job->id);    
-    }
+    $data['jobs'] = $this->jobs->get_for_current_user();
+    $this->_serve_with_templates($data, array('job/list'), 'all.json');
   }
 
-  // View a Job by ID
+  /* 
+   * Form to create a new Job 
+   * GET
+   * JSON: http://megi.local/index.php/job/add
+   * HTML: http://megi.local/index.php/job/add.json
+   */
+  function add()
+  {
+    $data['types'] = $this->config->item('modules');
+    $this->_serve_with_templates($data, array('job/new'));
+  }
+
+  /*
+   * Create a Job and redirect to view it
+   * POST
+   * JSON: http://megi.local/index.php/job/create.json
+   * HTML: http://megi.local/index.php/job/create
+   */
+  function create()
+  {
+    $data['job'] = $this->jobs->create();
+    $this->_serve_with_templates($data, array('job/view'));
+  }
+
+  /* 
+   * View Job 
+   * GET
+   * JSON: http://megi.local/index.php/job/view/[:id]
+   * HTML: http://megi.local/index.php/job/view/[:id].json
+   */
   function view($id)
   {
     // Get requested job and only show if it belongs to the user
@@ -72,29 +100,15 @@ class Job extends CI_controller {
     {
       $data['job'] = $job;
     } 
-    else 
-    {
-      redirect('job');
-    }
-
-    // Serve JSON if requested
-    if(strstr(current_url(), '.json'))
-    {
-      $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode($data);
-    }
-    // Serve HTML 
-    else 
-    {
-      //Create page
-      $this->load->view('header');
-      $this->load->view('job/view', $data);
-      $this->load->view('footer');
-    }
+    $this->_serve_with_templates($data, array('job/view'));
   }
 
-  // Handle Job
+  /* 
+   * Start a Job 
+   * GET
+   * JSON: http://megi.local/index.php/job/start/[:id]
+   * HTML: http://megi.local/index.php/job/start/[:id].json
+   */
   function start($id)
   {
     $job = $this->jobs->find_for_user($id);
@@ -105,55 +119,44 @@ class Job extends CI_controller {
       // Check if type is availible and run
       if(array_key_exists($job->type, $this->config->item('modules')))
       {
-        // files to use
+        // Handle files
         $specfile = $this->config->item('spec_path').'/'.$job->id.'.spec';
         $resfile = $this->config->item('result_path').'/'.$job->id.'.res';
         touch($resfile);
         chmod($resfile, 0666);
-
-        //write out spec to use
         $infile = fopen($specfile, 'w');
         fwrite($infile, $job->spec);
         fclose($infile);
 
-        //start job via helper
+        // Start Job via helper
         $start_func = $job->type.'_start';
         $tool_path = $this->config->item('tool_path');
         if($start_func($job, $specfile, $resfile, $tool_path))
         {
-          //job started
           $this->jobs->set_start_date($id);
         }
         else 
         {
-          $data['error'] = 'start failed'
+          $data['error'] = 'start failed';
         }
       } 
       else 
       {
-        $data['error'] = 'module not available failed'        
+        $data['error'] = 'module not available failed';
       }
     } 
-    // Serve JSON if requested
-    if(strstr(current_url(), '.json'))
-    {
-      $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode($data);
-    }
-    // Serve HTML 
-    else 
-    {
-      redirect('job', $data);
-    }
+    $this->_serve_with_templates($data, array('job/view'));
   }
   
-  // View the Job specifications
-  // Request JSON: http://megi.local/index.php/job/result/[:id].json  
+  /* 
+   * View Job Result
+   * GET
+   * JSON: http://megi.local/index.php/job/result/[:id]
+   * HTML: http://megi.local/index.php/job/result/[:id].json
+   */
   function result($id)
   {
     $job = $this->jobs->find_for_user($id);
-    // Job needs to be started
     if($job && $job->start_date != '0000-00-00 00:00:00')
     {
       $data['job'] = $job;
@@ -165,58 +168,25 @@ class Job extends CI_controller {
       $data['job'] = $job;
       $data['result'] = false;
     }
-    else
-    {
-      redirect('job');
-    }
-    // Serve JSON if requested
-    if(strstr(current_url(), '.json'))
-    {
-      $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode($data);
-    }
-    // Serve HTML 
-    else 
-    {    
-      $this->load->view('header');
-      $this->load->view('job/result', $data);
-      $this->load->view('footer');        
-    }
+    $this->_serve_with_templates($data, array('job/result'));
   }
 
   
-  // View the Job specifications
-  // Request JSON: http://megi.local/index.php/job/spec/[:id].json
+  /* 
+   * View Job Specification
+   * GET
+   * JSON: http://megi.local/index.php/job/spec/[:id]
+   * HTML: http://megi.local/index.php/job/spec/[:id].json
+   */
   function spec($id)
   {
     $job = $this->jobs->find_for_user($id);
     if($job)
     {
       $data['job'] = $job;
+      $data['spec'] = file_get_contents($this->config->item('spec_path').'/'.$job->id.'.spec');
     }
-    else
-    {
-      redirect('job');
-    }
-    // Get Spec
-    $data['spec'] = file_get_contents($this->config->item('spec_path').'/'.$job->id.'.spec');
-
-    // Serve JSON if requested
-    if(strstr(current_url(), '.json'))
-    {
-      $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode($data));
-    }
-    // Serve HTML 
-    else 
-    {
-      // Create page
-      $this->load->view('header');
-      $this->load->view('job/spec', $data);
-      $this->load->view('footer');
-    }
+    $this->_serve_with_templates($data, array('job/spec'));
   }
 
 

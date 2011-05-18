@@ -1,7 +1,9 @@
-<p>
+<?php if($result): ?>
   <?php echo $result;?>
-</p>
+<?php else: ?>
+  <p>Job not started yet</p>
+<?php endif; ?>
 
 <p>
-  <?php echo anchor('job/result/'.$job->id, 'Back', 'title=Back');?>
+  <?php echo anchor('job/view/'.$job->id, 'Back', 'title=Back');?>
 </p>
