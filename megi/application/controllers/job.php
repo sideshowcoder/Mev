@@ -27,13 +27,7 @@ class Job extends CI_controller {
     {
       redirect('/');
     }
-    // Inject flash if not present to handle views trying to display it
-    if(!isset($data['flash']))
-    {
-      $data['flash'] = false;
-    }
-    // create output
-    if(strstr(current_url(), $match))
+    elseif(strstr(current_url(), $match))
     {
       $this->output
         ->set_content_type('application/json')
@@ -41,7 +35,12 @@ class Job extends CI_controller {
     }
     else
     {
-      $this->load->view('header', $data);
+      $this->load->view('header');
+      // Add flash if there is something there
+      if(isset($data['flash']))
+      {
+        $this->load->view('flash', $data);
+      }
       foreach($templates as $template)
       {
         $this->load->view($template, $data);
@@ -134,15 +133,16 @@ class Job extends CI_controller {
         if($start_func($job, $specfile, $resfile, $tool_path))
         {
           $this->jobs->set_start_date($id);
+          $data['flash'] = 'Job started';
         }
         else 
         {
-          $data['flash'] = 'start failed';
+          $data['flash'] = 'Job start failed';
         }
       } 
       else 
       {
-        $data['flash'] = 'module not available failed';
+        $data['flash'] = 'Module for job not available';
       }
     } 
     $this->_serve_with_templates($data, array('job/view'));

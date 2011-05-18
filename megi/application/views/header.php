@@ -23,10 +23,5 @@
 <body>
   <div id="container">
 		<header></header>
-		<div id="flash">
-		<?php if($flash):?>
-		  <?php echo $flash;?>
-		<?php endif;?>
-		</div>
   	<div id="main" role="main">
     
