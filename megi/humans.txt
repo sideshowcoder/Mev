@@ -3,18 +3,18 @@
 
 
 /* TEAM */
-  <your title>: <your name>
-  Site: 
-  Twitter: 
-  Location: 
+  Author: Philipp Fehre
+  Site: http://sideshowcoder.com
+  Twitter: @ischi
+  Location: Munich
 
 /* THANKS */
-  Names (& URL): 
+  Names (& URL): Dirk Haage
 
 /* SITE */
   Standards: HTML5, CSS3
   Components: Modernizr, jQuery
-  Software:
+  Software: Codeignitor, Nodejs
   
 
                                     
