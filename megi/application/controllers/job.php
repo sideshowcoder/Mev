@@ -27,7 +27,7 @@ class Job extends CI_controller {
     {
       redirect('/');
     }
-    elseif(strstr(current_url(), $match))
+    elseif($match && strstr(current_url(), $match))
     {
       $this->output
         ->set_content_type('application/json')
@@ -74,6 +74,40 @@ class Job extends CI_controller {
   }
 
   /*
+   * Delete a Job
+   * POST
+   * JSON: http://megi.local/index.php/job/delete/[:id].json
+   * HTML: http://megi.local/index.php/job/delete/[:id]
+   */
+  function delete()
+  {
+    // get id from post
+    $id = $this->input->post('id');
+    // Get requested job and only show if it belongs to the user
+    $job = $this->jobs->find($id);
+    if($job->user_id == $this->tank_auth->get_user_id())
+    {
+      $success = $this->jobs->delete($id);
+    } 
+    else 
+    {
+      $sucess = false;
+    }
+    if(strstr(current_url(), '.json'))
+    {
+      $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode($success));      
+    }
+    else 
+    {
+      $data['jobs'] = $this->jobs->get_for_current_user();
+      $data['flash'] = $success ? 'Job deleted successfully' : 'Job deletion failed';
+      $this->_serve_with_templates($data, array('job/list'), false);      
+    }
+  }
+
+  /*
    * Create a Job and redirect to view it
    * POST
    * JSON: http://megi.local/index.php/job/create.json
@@ -81,7 +115,8 @@ class Job extends CI_controller {
    */
   function create()
   {
-    $data['job'] = $this->jobs->create();
+    $id = $this->jobs->create();
+    $data['job'] = $this->jobs->find($id);
     $this->_serve_with_templates($data, array('job/view'));
   }
 
@@ -133,6 +168,8 @@ class Job extends CI_controller {
         if($start_func($job, $specfile, $resfile, $tool_path))
         {
           $this->jobs->set_start_date($id);
+          // reload job from db
+          $data['job'] = $this->jobs->find_for_user($id);
           $data['flash'] = 'Job started';
         }
         else 
@@ -184,7 +221,7 @@ class Job extends CI_controller {
     if($job)
     {
       $data['job'] = $job;
-      $data['spec'] = file_get_contents($this->config->item('spec_path').'/'.$job->id.'.spec');
+      $data['spec'] = $job->spec;
     }
     $this->_serve_with_templates($data, array('job/spec'));
   }

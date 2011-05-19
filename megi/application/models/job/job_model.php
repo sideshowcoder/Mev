@@ -29,7 +29,7 @@ class Job_model extends CI_Model {
 
     // insert in db
     $this->db->insert('jobs', $this);
-    return $this;
+    return $this->db->insert_id();;
   }
 
   // Get the jobs for user
@@ -43,6 +43,12 @@ class Job_model extends CI_Model {
   {
     $query = $this->db->get_where('jobs', array('id' => $id), 1);
     return $query->row();
+  }
+  
+  function delete($id)
+  {
+    $this->db->delete('jobs', array('id' => $id));
+    return true;
   }
 
   //find job and check if it belongs to the current user

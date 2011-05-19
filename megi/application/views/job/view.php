@@ -2,10 +2,10 @@
 
 <tr><td>Type</td><td><?php echo $job->type;?></td></tr>
 <tr><td>Name</td><td><?php echo $job->name;?></td></tr>
-<tr><td>Specification</td><td><?php echo anchor("/job/spec/$job->id", 'View', 'title="View Job Specification"');?></td><tr>
-<tr><td>Result</td><td><?php echo anchor("/job/result/$job->id", 'View', 'title="View Job Result"');?></td><tr>
 <tr><td>Date added</td><td><?php echo $job->add_date;?></td></tr>
 <tr><td>Date started</td><td><?php echo $job->start_date;?></td></tr>
+<tr><td><?php echo anchor("/job/spec/$job->id", 'Show Specification', 'title="View Job Specification"');?></td><tr>
+<tr><td><?php echo anchor("/job/result/$job->id", 'Show Result', 'title="View Job Result"');?></td><tr>
 
 </table>
 
