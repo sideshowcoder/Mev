@@ -1,6 +1,9 @@
   </div>
   <footer>
     <?php echo anchor('/', 'Home', 'title=home');?>
+    <?php echo anchor('/job', 'Jobs', 'title=jobs');?>
+    <?php echo anchor('/job/add', 'New', 'title=new');?>
+    <?php echo anchor('/auth/logout/', 'Logout', 'title=logout');?>
   </footer>
 </div>
 
