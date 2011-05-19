@@ -1,3 +1,3 @@
-$(function(){
+dojo.ready(function(){
 
-});
+});
