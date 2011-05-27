@@ -1,6 +1,7 @@
 megi/logs/*
 megi/result/*.res
 megi/spec/*.spec
+megi/application/config/database.php
 mev/node_modules
 mev/npm-debug.log
 mev/test/testoutput.out
