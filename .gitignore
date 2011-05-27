@@ -1,4 +1,4 @@
-megi/application/logs/*
+megi/logs/*
 megi/result/*.res
 megi/spec/*.spec
 mev/node_modules
