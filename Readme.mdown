@@ -1,15 +1,7 @@
 Mev & Megi
 ==========
 
-Mev is a measurement microframework to handle all kinds of network measurements
-in an evented fashion it is developed as part of the iStrukta Project at the TU
-München. It is based on Nodejs to provide a useful event mechanism. In order to
-provide a maximal output no state is held inside the application per measurement
-request, but it is passed via the events, this enables massive parallel
-measurements.
-
-Megi is a Webfrontend based on [Codeignitor](http://codeigniter.com/) to ease
-the usage of Mev and to provide a visual feedback.
+Mev is a measurement microframework to handle all kinds of network measurements in an evented fashion it is developed as part of the iStrukta Project at the TU München. It is based on Nodejs to provide a useful event mechanism. In order to provide a maximal output no state is held inside the application per measurement request, but it is passed via the events, this enables massive parallel measurements.
 
 Mev
 ---
@@ -23,16 +15,24 @@ Mev
 ### Install
 Best install via npm
   
-  $ npm install
+  $ git clone git@github.com:sideshowcoder/Mev.git && cd Mev/mev && npm install
 
 ### Use
-Via command line 
+Most simple usage, to scan 131.159.20.xxx for all reverse DNS entries
   
-  $ echo '131.159.20' > input.txt
-  $ mev -r input.txt -m rdns -o output.csv
+  $ echo '131.159.20' | mev -r - -m rdns -o output.csv
 
-Or use the soon to come Webinterface
+Results can either be saved to redis (specify index via --idx) or a csv file via the -o Option. To view all Options run 
+
+  $ mev -h
 
 Megi
 ----
-Development just started, not much to see here, yet.
+Megi is a Webfrontend based on [Codeignitor](http://codeigniter.com/) to ease the usage of Mev and to provide a visual feedback. Currently is missing any styling. And is by far not feature complete but the basics work, Jobs can be created, run and the result is viewable. 
+
+### Setup
+Configure a database with the provided schema.sql and set the application/config/database.php accordingly. 
+
+### Testing
+* Unit test framework used ist Toast [Toast](http://jensroland.com/projects/toast/)
+* Functional Tests are run via [Windmill](http://www.getwindmill.com/) 

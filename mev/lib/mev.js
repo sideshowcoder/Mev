@@ -2,9 +2,9 @@
  * Author: Philipp Fehre <philipp.fehre@googlemail.com>
  * 
  * Uses events to dispatch request for measurements to given measurement
- * module
+ * module so the module itself does not need to handle this.
  * 
- * This is part of the iStrukta Project for internet analyzation
+ * This is part of the iStrukta Project for internet analyzation (http://measr.net/)
  */
 
 var redis = require('redis'),

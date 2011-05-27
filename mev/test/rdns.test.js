@@ -312,7 +312,7 @@ module.exports = {
     rdns.handleRes(result); 
   },
   
-  // BUG 1 Don't use same DNS Server all the way down, request new for every net
+  // BUG Regression test Don't use same DNS Server all the way down, request new for every net
   'BUG 1 Dont use same DNS Server all the way down the chain CASE 1 no ns for new subnet': function(){
     var rdns = new RDNS('rdns');
         input = {

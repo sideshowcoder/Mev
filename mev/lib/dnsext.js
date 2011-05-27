@@ -1,4 +1,7 @@
 /* 
+ * Extension of the default node dns.js to use passed Nameservers
+ * Author of those small changes Philipp Fehre <philipp.fehre@gmail.com>  
+ * 
  * IMPORTANT! METHODS NOT MARKED TESTED ARE NOT TESTED!
  * THEY PROBABLY WORK BUT ARE SIMPLY COPIED FROM THE ORIGINAL
  * NODE IMPLEMENTATION, WITHOUT TESTCODE ENSURING THE EXTENSION

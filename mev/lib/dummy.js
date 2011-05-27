@@ -4,7 +4,7 @@
  * Does not really provide anything, just for testing as well as specify the 
  * Struktur of a module 
  * 
- * This is part of the iStrukta Project for internet analyzation
+ * This is part of the iStrukta Project for internet analyzation (http://measr.net/)
  */
 
 var mev = require(__dirname + '/mev'),

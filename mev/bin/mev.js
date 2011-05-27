@@ -1,28 +1,25 @@
 #!/usr/bin/env node
 
-// START WRAPPER
 (function(){
   
-    /* Reverse DNS resolver script for command line use
+  /* Reverse DNS resolver script for command line use
    * Author: Philipp Fehre <philipp.fehre@googlemail.com>
    * 
    * Provide a way to parallely resolve a massive number of Reverse DNS Requests
-   * Uses Redis to Store requests as well as results
+   * Uses Redis to Store requests as well as results or write to csv file
+   * 
+   * Usage see mev -h
    *
-   * This is part of the iStrukta Project for internet analyzation
+   * This is part of the iStrukta Project for internet analyzation (http://measr.net/)
    */
   
-  // Get libs for command line parsing and mev
   var nomnom = require('nomnom'),
       nodrrr = require('nodrrr'),
   		Mev = require('../lib/mev'),
-    	Rdns = require('../lib/rdns');
-  
-  // 	I/O
-  var	sys = require('sys'),
+    	Rdns = require('../lib/rdns'),
+  	  sys = require('sys'),
   		fs = require('fs');
   
-  // Specify opts
   var opts = [
   	{	
   		name: 'help',
@@ -81,26 +78,21 @@
     }
   ]
   
-  // Parse opts
   var options = nomnom.parseArgs(opts)
-  
-  
-  // Init
+    
   if (options.requests) {
     if(options.growl){
-      // Growl specs
+      // growl enabled so get the config and setup
       var host = options.growlhost || 'localhost',
           app = 'mev',
           all = ['Mev status'],
           def = ['Mev status'],
           pass = options.growlpass || null;
-      // Setup
       var growl = new nodrrr.Nodrrr(host, app, all, def, pass);
-      // Register
       growl.register();
     }
-    // Load and run reverse dns
     if(options.module == 'rdns') {
+      // Using reverse dns module so create and run
       var module = new Rdns('rdns'),
   	    	mev = new Mev(module, options.requests, options.debug, options.stats, options.output, options.dbidx, options.autoshutdown);
       if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false);
@@ -109,12 +101,11 @@
   }
   
   mev.on('shutdown', function(){
-    // Done using auto shutdown
     if(options.growl) growl.notify('Mev stop', 'Mev RDNS resolver', 'RDNS resolver done', 0, false);
     process.exit(0);
   })
   
-})() // END WRAPPER
+})()
 
 
 
