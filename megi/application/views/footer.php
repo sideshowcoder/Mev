@@ -1,10 +1,8 @@
+  <!-- close main -->
   </div>
   <footer>
-    <?php echo anchor('/', 'Home', 'title=home');?>
-    <?php echo anchor('/job', 'Jobs', 'title=jobs');?>
-    <?php echo anchor('/job/add', 'New', 'title=new');?>
-    <?php echo anchor('/auth/logout/', 'Logout', 'title=logout');?>
   </footer>
+<!-- close container -->
 </div>
 
 <script src=<?php echo base_url()."public/js/libs/dojo/dojo.js";?>></script>

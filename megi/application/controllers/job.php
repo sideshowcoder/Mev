@@ -36,6 +36,8 @@ class Job extends CI_controller {
     else
     {
       $this->load->view('header');
+      // Add navigation
+      $this->load->view('nav');      
       // Add flash if there is something there
       if(isset($data['flash']))
       {

@@ -1,5 +1,5 @@
-<table>
-<tr>
+<table id="jobtable">
+<tr class="jobtablerow">
   <th>Type</th>
   <th>Name</th>
   <th>Queued</th>
@@ -8,7 +8,7 @@
   <th>Delete</th>
 </tr>
 <?php foreach($jobs as $job):?>
-<tr>
+<tr class="jobtablerow">
   <td><?php echo $job->type;?></td>
   <td>
   <?php if($job->name): ?>
