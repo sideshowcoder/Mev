@@ -85,6 +85,12 @@ body {
 
 header {}
 
+#content {
+  padding: 15px;}
+  
+#content h2 {
+  padding: 0 0 15px 0;}
+
 footer {
   text-align: left;
   position: absolute;
