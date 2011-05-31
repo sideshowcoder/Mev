@@ -78,27 +78,99 @@ h1, h2, h3, h4, h5, h6 { font-weight: bold; }
 a, a:active, a:visited { color: #607890; }
 a:hover { color: #036; }
 
-/*
-    // ========================================== \\
-   ||                                              ||
-   ||               Your styles !                  ||
-   ||                                              ||
-    \\ ========================================== //
-*/
+/*** Megi styles ***/
+body {
+  background: #fff url('/public/images/bgstripe.png') repeat top left;
+}
 
+header {}
 
+footer {
+  text-align: left;
+  position: absolute;
+  padding: 15px 0;
+  bottom: 0;
+  width: 100%;
+  background: #ddd;
+}
 
+footer a {
+  padding: 15px;
+  text-decoration: none;
+  color: #444;}
+  
+footer a:hover {
+  background: #eee;}
+  
+#main {  
+  -moz-box-shadow: 5px 5px 5px #888;
+  -webkit-box-shadow: 5px 5px 5px #888;
+  box-shadow: 5px 5px 5px #888;
+  background: #fff;
+  margin: 10px 0 0 10px;
+  width: 800px;
+  min-height: 600px;}
 
+#container {
+  text-align:left;
+}
 
+#flash {}
+  
+#nav {}
 
+#navlist {
+  margin: 0;
+  padding: 15px 0;
+  background-color: #444;}  
 
+.navitem {
+  display: inline;}
 
+.navitem a {
+  padding: 15px;
+  color: #ddd;
+  background-color: #444;
+  text-decoration: none;}
 
+.navitem a:hover {
+  color: #fff;
+  background-color: #000;}
 
+#jobtable {
+  text-align:center;
+  width: 800px;}
+  
+#jobtable th {
+  border:1px #444 solid;}
+  
+#jobtable td {
+  padding: 5px 0;}
 
+.rowb {
+  background-color: #ddd;}
 
+.roww {
+  background-color: #fff;}
 
+  
+#jobform {}
+  
+.jobformitem {}
+  
+#jobresult {}
 
+.btn {}
+  
+#back {}
+  
+#start {}
+
+#jobsepc {}
+  
+#jobviewtable {}
+  
+/*** Megi styles END ***/
 
 .ir { display: block; text-indent: -999em; overflow: hidden; background-repeat: no-repeat; text-align: left; direction: ltr; }
 .hidden { display: none; visibility: hidden; }
