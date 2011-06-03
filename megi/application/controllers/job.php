@@ -14,7 +14,7 @@ class Job extends CI_controller {
     //load ci helpers
     $this->load->helper(array('form', 'download'));
     //load project helpers
-    $this->load->helper(array('rdns'));
+    $this->load->helper(array('rdns', 'download'));
   }
   
   /*
@@ -199,7 +199,7 @@ class Job extends CI_controller {
     if($job && $job->start_date != '0000-00-00 00:00:00')
     {
       $data['job'] = $job;
-      $result = file_get_contents($this->config->item('result_path').'/'.$job->id.'.res');
+      $result = explode('<br />', nl2br(file_get_contents($this->config->item('result_path').'/'.$job->id.'.res')));
       $data['result'] = $result;
     }
     elseif($job)
@@ -208,6 +208,22 @@ class Job extends CI_controller {
       $data['result'] = false;
     }
     $this->_serve_with_templates($data, array('job/result'));
+  }
+
+  /*
+   * Download the result as csv
+   */
+  function result_download($id)
+  {
+    $job = $this->jobs->find_for_user($id);
+    if($job && $job->start_date != '0000-00-00 00:00:00')
+    {
+      $job->name ? $name = $job->name : $name = $job->id;
+      $name = $name.".csv";
+      $data = file_get_contents($this->config->item('result_path').'/'.$job->id.'.res');
+      force_download($name, $data);
+      redirect(base_url().'/job/result/'.$id);
+    }
   }
 
   
@@ -223,7 +239,7 @@ class Job extends CI_controller {
     if($job)
     {
       $data['job'] = $job;
-      $data['spec'] = $job->spec;
+      $data['spec'] = explode('<br />', nl2br($job->spec));
     }
     $this->_serve_with_templates($data, array('job/spec'));
   }

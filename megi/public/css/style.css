@@ -144,8 +144,9 @@ footer a:hover {
   background-color: #000;}
 
 #jobtable {
-  text-align:center;
-  width: 800px;}
+  margin: 10px;
+  width: 780px;
+  text-align:center;}
   
 #jobtable th {
   border:1px #444 solid;}
@@ -160,21 +161,39 @@ footer a:hover {
   background-color: #fff;}
 
   
-#jobform {}
-  
-.jobformitem {}
-  
-#jobresult {}
+#jobform {
+  margin: 10px;}
 
-.btn {}
-  
-#back {}
-  
+#jobform select {
+  width: 200px;}
+#jobform input {
+  width: 200px;}
+#jobform textarea {
+  width: 500px;}
+
+#jobform .submitbtn {
+  width: 150px;}
+
+#jobform tr {
+  height:30px;}
+
+#jobform td {
+  min-width: 50px;
+  padding: 10px 10px 10px 10px;}
+
+#jobresult {
+  margin:10px;}
+
 #start {}
 
-#jobsepc {}
+#jobspec {
+  margin:10px;}
+
+#jobspec a {}
   
-#jobviewtable {}
+  
+#jobviewtable {
+  margin: 10px}
   
 /*** Megi styles END ***/
 
