@@ -195,6 +195,18 @@ footer a:hover {
 #jobviewtable {
   margin: 10px}
   
+/** auth style **/
+#authform {
+  font-size: 20px;
+  padding: 150px 0 150px 10px;}
+
+#authform table td {
+  padding: 5px; }
+  
+#authform .navitem {
+  margin: 5px 0 0 0;
+}
+  
 /*** Megi styles END ***/
 
 .ir { display: block; text-indent: -999em; overflow: hidden; background-repeat: no-repeat; text-align: left; direction: ltr; }

@@ -12,6 +12,7 @@ if ($this->config->item('use_username', 'tank_auth')) {
 	$login_label = 'Email';
 }
 ?>
+<div id="authform">
 <?php echo form_open($this->uri->uri_string()); ?>
 <table>
 	<tr>
@@ -22,3 +23,4 @@ if ($this->config->item('use_username', 'tank_auth')) {
 </table>
 <?php echo form_submit('reset', 'Get a new password'); ?>
 <?php echo form_close(); ?>
+</div>

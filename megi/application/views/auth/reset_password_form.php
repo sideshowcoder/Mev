@@ -12,6 +12,7 @@ $confirm_new_password = array(
 	'size' 	=> 30,
 );
 ?>
+<div id="authform">
 <?php echo form_open($this->uri->uri_string()); ?>
 <table>
 	<tr>
@@ -27,3 +28,4 @@ $confirm_new_password = array(
 </table>
 <?php echo form_submit('change', 'Change Password'); ?>
 <?php echo form_close(); ?>
+</div>

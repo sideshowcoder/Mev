@@ -59,8 +59,15 @@ class Job extends CI_controller {
    */
   function index()
   {
-    $data['jobs'] = $this->jobs->get_for_current_user();
-    $this->_serve_with_templates($data, array('job/list'), 'all.json');
+    if($this->tank_auth->is_logged_in())
+    {
+      $data['jobs'] = $this->jobs->get_for_current_user();
+      $this->_serve_with_templates($data, array('job/list'), 'all.json');
+    }
+    else 
+    {
+      redirect('/auth/login');
+    }
   }
 
   /* 

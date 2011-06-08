@@ -5,6 +5,7 @@ $password = array(
 	'size'	=> 30,
 );
 ?>
+<div id="authform">
 <?php echo form_open($this->uri->uri_string()); ?>
 <table>
 	<tr>
@@ -15,3 +16,4 @@ $password = array(
 </table>
 <?php echo form_submit('cancel', 'Delete account'); ?>
 <?php echo form_close(); ?>
+</div>

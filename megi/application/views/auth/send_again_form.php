@@ -7,6 +7,7 @@ $email = array(
 	'size'	=> 30,
 );
 ?>
+<div id="authform">
 <?php echo form_open($this->uri->uri_string()); ?>
 <table>
 	<tr>
@@ -17,3 +18,4 @@ $email = array(
 </table>
 <?php echo form_submit('send', 'Send'); ?>
 <?php echo form_close(); ?>
+</div>

@@ -31,6 +31,7 @@ $captcha = array(
 	'maxlength'	=> 8,
 );
 ?>
+<div id="authform">
 <?php echo form_open($this->uri->uri_string()); ?>
 <table>
 	<tr>
@@ -89,5 +90,6 @@ $captcha = array(
 		</td>
 	</tr>
 </table>
-<?php echo form_submit('submit', 'Let me in'); ?>
+<?php echo form_submit(array('name' => 'submit', 'value' => 'Login', 'class' => 'navitem')); ?>
 <?php echo form_close(); ?>
+</div>
