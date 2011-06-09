@@ -8,7 +8,7 @@
  */
 
 var mev = require(__dirname + '/mev'),
-	EventEmitter = require('events').EventEmitter;
+    EventEmitter = require('events').EventEmitter;
 
 function Dummy(id) {
 		

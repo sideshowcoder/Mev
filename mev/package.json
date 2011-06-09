@@ -14,8 +14,7 @@
   "scripts": { "test": "expresso" },
   "devDependencies": { "expresso": "*",
                        "should": "*" },
-  "dependencies":  { "redis": "*",
-                      "nomnom": "*",
+  "dependencies":  {  "nomnom": "*",
                       "nodrrr": "*" },
   "engines": { "node": "0.3 || 0.4" }
 }

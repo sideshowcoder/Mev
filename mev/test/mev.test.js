@@ -2,33 +2,14 @@ var assert = require('assert'),
     should = require('should'),
     util = require('util'),
 		Mev = require('../lib/mev'),
-	  redis = require('redis'),
     fs = require('fs'),
 		Dummy = require('../lib/dummy');
 
 module.exports = {
-	
-	'test redis accessible and empty': function(){
-	  var dummy = new Dummy('dummy'),
-	      mev = new Mev(dummy, __dirname + '/data/dummyinput.lst');
-	  mev.db.keys('*', function(err, status){
-      assert.isNull(err);
-      status.should.be.instanceof(Array).and.be.empty;
-	  });
-    mev.db.set('a', 'a', function(err, status){
-      assert.isNull(err);
-      status.should.be.a('string').and.eql('OK');
-    });
-    mev.db.get('a', function(err, status){
-      assert.isNull(err);
-      status.should.be.a('string').and.eql('a');
-      mev.stop();
-    });
-  },
-	
+		
   'test data input basic': function(){
 	  var dummy = new Dummy('dummy'),
-	      mev = new Mev (dummy, __dirname + '/data/dummyinput.lst');
+	      mev = new Mev(dummy,  __dirname + '/data/dummyinput.lst', __dirname + 'testoutput.out');
 	  dummy.on('data', function(data){
       data.should.eql({ data:1 });
     });
@@ -38,7 +19,7 @@ module.exports = {
 
   'test read data': function(){
 	  var dummy = new Dummy('dummy'),
-	      mev = new Mev (dummy, __dirname + '/data/dummyinput.lst');
+	      mev = new Mev (dummy, __dirname + '/data/dummyinput.lst', __dirname + 'testoutput.out');
 	  dummy.on('data', function(data){
       data.should.be.a('object').and.have.ownProperty('data');
       data.should.not.eql({ data:'#' });
@@ -50,7 +31,7 @@ module.exports = {
 
   'test event registration': function(){
 	  var dummy = new Dummy('dummy'),
-	      mev = new Mev (dummy, __dirname + '/data/dummyinput.lst');
+	      mev = new Mev (dummy, __dirname + '/data/dummyinput.lst', __dirname + 'testoutput.out');
     mev.regEvents();
     dummy.listeners('data')[0].should.be.a('function');
     dummy.listeners('request')[0].should.be.a('function');
@@ -61,7 +42,7 @@ module.exports = {
 
   'test pass through': function(){
 	  var dummy = new Dummy('dummy'),
-	      mev = new Mev (dummy, __dirname + '/data/dummyinput.lst');
+	      mev = new Mev (dummy, __dirname + '/data/dummyinput.lst', __dirname + 'testoutput.out');
     mev.regEvents();
     mev.on('done', function(res){
       res.should.eql('1');
@@ -72,7 +53,7 @@ module.exports = {
 
   'test fileoutput': function(){
     var dummy = new Dummy('dummy'),
-        mev = new Mev(dummy, __dirname + '/data/dummyinput.lst', false, false, __dirname + '/testoutput.out');
+        mev = new Mev(dummy, __dirname + '/data/dummyinput.lst', __dirname + '/testoutput.out');
     mev.finishRes({ 'key': '1', 'value':'1' });
     mev.on('finish', function(res){
       fs.readFile(__dirname + '/testoutput.out', 'utf8', function(err, data){

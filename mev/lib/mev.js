@@ -7,45 +7,26 @@
  * This is part of the iStrukta Project for internet analyzation (http://measr.net/)
  */
 
-var redis = require('redis'),
-		sys = require('sys'),
+var sys = require('sys'),
 		fs = require('fs'),
 		EventEmitter = require('events').EventEmitter;
 
-function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, thatshutdown) {
+function Mev(mmodule, input, output, debug) {
 	
   var that = this,
-      outfd,
-      dbidx;
+      outd,
+      ind;
       
-  that.db = null;
   that.mm = mmodule;
 
-  // If thatshutdown is turned of set count to 1 and it will not be modified
-  (thatshutdown) ? that.active_req_count = 0 : that.active_req_count = -1;
+  // Open the output file in append mode
+  outd = fs.openSync(output, 'a');
+  ind = input;
 
-	// Get DB connection this should be accessible from the outside 
-	// so it is exported with the module to be used in the caller
-	if(!fileoutput) {
-    that.db = redis.createClient();
-	  that.db.on('error', function(err){ 
-		  console.log('Error' + err);
-  	})
-    // Select the right index
-    that.db.select(redisidx, function(){
-	    // Clear DB for new resulsts
-    	that.db.flushdb();
-    })
-  } else {
-    // Open the output file in append mode
-    outfd = fs.openSync(fileoutput, 'a');
-  }
-
-	
 	// Read the input file
 	that.readData = function(){
-		logger('reading ', infile);
-		fs.readFile(infile, 'utf8', function(err, data){
+		logger('reading ', ind);
+		fs.readFile(ind, 'utf8', function(err, data){
 			if(err) throw err;
 			that.dataInput(data);
 		});
@@ -74,22 +55,13 @@ function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, thatshutdown) {
 	// Finished Request
 	that.finishRes = function(res){
 		logger('finishResult: ', res)
-    if(!fileoutput) {
-  		that.db.set(res.key, res.value, function(){
-	  			that.emit('finish', res);
-		  })
-    } else {
-      fs.writeSync(outfd, res.key + ', ' + res.value + '\n')
-      that.emit('finish', res);
-    }
-    // Attempt shutdown if all request are run
-    if(!that.active_req_count) setTimeout(that.stop(), 2000);
+    fs.writeSync(outd, res.key + ', ' + res.value + '\n')
+    that.emit('finish', res);
 	};
 	
 	
 	// Generate Requests
 	that.genReq = function(data){
-    autoshutdown(1);
     logger('genReq: ', data);
 		that.mm.genReq(data);
 	};
@@ -102,8 +74,6 @@ function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, thatshutdown) {
 	
 	// Handle results
 	that.handleRes = function(res){
-    autoshutdown(-1);
-    status();
 		logger('handleRes: ', res);
 		that.mm.handleRes(res);
 	};
@@ -127,37 +97,19 @@ function Mev(mmodule, infile, debug, stat, fileoutput, redisidx, thatshutdown) {
 		}
 	};
 	
-  function autoshutdown(count){
-    if(thatshutdown) {
-      that.active_req_count += count;
-    }
-  };
-
-	function status() {
-		if(stat) {
-			console.log('currently active requests: ' + that.active_req_count);
-		}
-	};
-	
 	that.stop = function(){
     // Only shutdown if requests are all handled
-    if(!that.active_req_count) {
-      logger('deregistering events');
-      that.mm.removeAllListeners('data');
-      that.mm.removeAllListeners('request');
-      that.mm.removeAllListeners('result');
-      that.mm.removeAllListeners('done');
-      if(that.db) {
-        logger('closing database connection');
-        setTimeout(that.db.end(), 2000);
-      }
-      if(outfd) {
-        logger('closing file');
-        fs.closeSync(outfd);
-      }
-      logger('shut down');
-      that.emit('shutdown');
+    logger('deregistering events');
+    that.mm.removeAllListeners('data');
+    that.mm.removeAllListeners('request');
+    that.mm.removeAllListeners('result');
+    that.mm.removeAllListeners('done');
+    if(outd) {
+      logger('closing file');
+      fs.closeSync(outd);
     }
+    logger('shut down');
+    that.emit('shutdown');
 	};
 }
 

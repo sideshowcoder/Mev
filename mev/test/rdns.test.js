@@ -343,12 +343,16 @@ module.exports = {
         },
         result = {
           ip: '131.159.20',
-          cns: 'a.ns.20.159.131.in-addr.arpa',
-          nsl: ['a.ns.20.159.131.in-addr.arpa'],
+          cns: 'tuminfo1.informatik.tu-muenchen.de',
+          nsl: ['tuminfo1.informatik.tu-muenchen.de',
+                'dns1.lrz.de',
+                'dns1.net.informatik.tu-muenchen.de',
+                'dns2.lrz.de',
+                'dns3.lrz.de' ],
           reqnsl: false,
           ptr: false
         };
-      // wire
+    // wire
     rdns.on('result', rdns.handleRes);
     // test
     rdns.on('data', function(data){

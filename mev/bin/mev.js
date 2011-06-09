@@ -32,11 +32,6 @@
   		help: 'Debug mode logging everything done'
   	},
   	{
-  		name: 'stats',
-  		string: '--stat',
-  		help: 'show status'
-  	},
-  	{
   	  name: 'requests',
   		string: '-r PATH, --requests=PATH',
   		help: 'Requests to run'
@@ -49,12 +44,7 @@
    {
       name: 'output',
       string: '-o FILEOUT, --output=FILEOUT',
-      help: 'specify output to file instead of redis, with filename'
-    },
-   {
-      name: 'dbidx',
-      string: '--idx',
-      help: 'specifiy the redis index to use to save the results'
+      help: 'specify output to file with filename'
     },
    {
       name: 'autoshutdown',
@@ -94,17 +84,11 @@
     if(options.module == 'rdns') {
       // Using reverse dns module so create and run
       var module = new Rdns('rdns'),
-  	    	mev = new Mev(module, options.requests, options.debug, options.stats, options.output, options.dbidx, options.autoshutdown);
+  	    	mev = new Mev(module, options.requests, options.debug, options.stats, options.output);
       if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false);
       mev.start();
     }
-  }
-  
-  mev.on('shutdown', function(){
-    if(options.growl) growl.notify('Mev stop', 'Mev RDNS resolver', 'RDNS resolver done', 0, false);
-    process.exit(0);
-  })
-  
+  }  
 })()
 
 
