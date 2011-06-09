@@ -4,6 +4,7 @@ megi/spec/*.spec
 megi/application/config/database.php
 mev/node_modules
 mev/npm-debug.log
-mev/test/testoutput.out
+testoutput.out
+testtestoutput.out
 mev/tryout
 .DS_Store

@@ -5,7 +5,7 @@ var Mev = require('../lib/mev'),
 var mmd = new Dummy('dummy');
 
 // Create instance of Mev with dummy module
-var mev = new Mev(mmd, __dirname + '/dummyin.lst', true);
+var mev = new Mev(mmd, __dirname + '/dummyin.lst', __dirname + '/testoutput.out');
 
 // Start mev
 mev.start();

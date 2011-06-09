@@ -5,7 +5,7 @@ var Mev = require('../lib/mev'),
 var mmrdns = new RDNS('rdns');
 
 // Create instance of Mev with rdns as measurement module and make write out to rdnsoutput file
-var mev = new Mev(mmrdns, __dirname + '/rdnsinput.lst', true, false, __dirname + '/rdnsoutput.csv');
+var mev = new Mev(mmrdns, __dirname + '/rdnsinput.lst', __dirname + '/rdnsoutput.csv');
 
 // Start the instance
 mev.start();
