@@ -9,28 +9,38 @@
 
 var sys = require('sys'),
 		fs = require('fs'),
+		net = require('net'),
 		EventEmitter = require('events').EventEmitter;
 
-function Mev(mmodule, input, output, debug) {
+/*
+ * mmodule: module being used implementing the needed mev events
+ * input: socket to read data from (utf8)
+ * output: socket to write result to (utf8)
+ * flags: 
+ *        flags.debug: enable or disable debugging
+ *        flags.timeout: maximum time between responses before shutdown (defaults to 30sec)
+ */
+function Mev(mmodule, input, output, flags) {
 	
   var that = this,
-      outd,
-      ind;
-      
+      flags = flags || {},
+      debug = flags.debug || false,
+      timeout = flags.timeout || 30000;
+  
   that.mm = mmodule;
-
-  // Open the output file in append mode
-  outd = fs.openSync(output, 'a');
-  ind = input;
-
-	// Read the input file
-	that.readData = function(){
-		logger('reading ', ind);
-		fs.readFile(ind, 'utf8', function(err, data){
-			if(err) throw err;
-			that.dataInput(data);
-		});
-	};
+  
+  // shutdown after TIMEOUT inactivity unless timeout is set to 0
+  if(timeout !== 0) td = setTimeout(that.stop, timeout);
+  
+	// Read input from socket
+	input.on('data', function(){
+	  // close connection on EOF
+	  if(data.indexOf('EOF') !== -1) {
+      input.end();
+      return;	    
+	  }
+	  that.dataInput(data);
+	});
 	
 	// Data input to module
 	that.dataInput = function(data){
@@ -55,7 +65,13 @@ function Mev(mmodule, input, output, debug) {
 	// Finished Request
 	that.finishRes = function(res){
 		logger('finishResult: ', res)
-    fs.writeSync(outd, res.key + ', ' + res.value + '\n')
+	  // reset the inactivity timeout
+	  if(td) {
+	    clearTimeout(td);
+	    td = setTimeout(that.stop, timeout);
+    }
+    // write result to socket
+    output.write(output, res.key + ', ' + res.value + '\n')
     that.emit('finish', res);
 	};
 	
@@ -78,7 +94,7 @@ function Mev(mmodule, input, output, debug) {
 		that.mm.handleRes(res);
 	};
 	
-	/*** Start mev ***/
+	// Start
 	that.start = function(){
 		logger('starting mev');
 		// Events
@@ -86,7 +102,31 @@ function Mev(mmodule, input, output, debug) {
 		that.readData();
 	};	
 
-	/*** Helpers ***/ 
+	// Stop
+	that.stop = function(){
+    logger('deregistering events');
+    // remove events
+    that.mm.removeAllListeners('data');
+    that.mm.removeAllListeners('request');
+    that.mm.removeAllListeners('result');
+    that.mm.removeAllListeners('done');
+    // close sockets
+    try {
+      output.end();
+    } catch(err) {
+      // Nothing to end obviously 
+    }
+    try {
+      if(input) input.end();
+    } catch(err) {
+      // Nothing to end obviously 
+    }
+    // shutdown done
+    logger('shut down');
+    that.emit('shutdown');
+	};
+
+  // Logging
 	function logger(desc, obj) {
 		if(debug) { 
 			if(typeof(obj) === undefined){
@@ -95,22 +135,7 @@ function Mev(mmodule, input, output, debug) {
 				console.log(desc + sys.inspect(obj));
 			}
 		}
-	};
-	
-	that.stop = function(){
-    // Only shutdown if requests are all handled
-    logger('deregistering events');
-    that.mm.removeAllListeners('data');
-    that.mm.removeAllListeners('request');
-    that.mm.removeAllListeners('result');
-    that.mm.removeAllListeners('done');
-    if(outd) {
-      logger('closing file');
-      fs.closeSync(outd);
-    }
-    logger('shut down');
-    that.emit('shutdown');
-	};
+	};	
 }
 
 // Extend EventEmitter
