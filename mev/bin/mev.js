@@ -24,18 +24,13 @@
   var opts = [
   	{	
   		name: 'help',
-  	  string: '-h',
+  	  string: '-h, --help',
   		help: 'Show help'
   	},
   	{	
   		name: 'debug',
-  		string: '-d',
+  		string: '-d, --debug',
   		help: 'Debug mode logging everything done'
-  	},
-  	{
-  	  name: 'requests',
-  		string: '-r INPUT, --requests=INPUT',
-  		help: 'Requests to run either as unix or tcp socket to read from'
   	},
     {
       name: 'module',
@@ -43,9 +38,24 @@
       help: 'specify module to use currently availible: rdns'
     },
     {
+      name: 'file',
+      string: '-f, --file',
+      help: 'specify output and input as a file'
+    },    
+    {
+      name: 'host',
+      string: '--host',
+      help: 'specify host for tcp socket, defaults to localhost'
+    },
+  	{
+  	  name: 'input',
+  		string: '-i INPUT, --input=INPUT',
+  		help: 'Input is read form this, if -f is specified this is a file'
+  	},
+    {
       name: 'output',
       string: '-o OUTPUT, --output=OUTPUT',
-      help: 'specify output to either tcp or unix socket'
+      help: 'output is written to this, if -f is given this is a file'
     },
     {
       name: 'growl',
@@ -64,53 +74,70 @@
     }
   ]
   
-  var options = nomnom.parseArgs(opts)
-    
-  if (options.requests) {
-    if(options.growl){
-      // growl enabled so get the config and setup
-      var host = options.growlhost || 'localhost',
-          app = 'mev',
-          all = ['Mev status'],
-          def = ['Mev status'],
-          pass = options.growlpass || null;
-      var growl = new nodrrr.Nodrrr(host, app, all, def, pass);
-      growl.register();
-    }
-    
-    // Open input
-    var i, o, s;
-    s = net.createServer(function(input){
-      i = input;
-    })
-    if(parseFloat(options.requests)) {
-      s.listen(parseFloat(options.requests), 'localhost');
+  var options = nomnom.parseArgs(opts);
+  
+  // Setup growl  
+  if(options.growl){
+    // growl enabled so get the config and setup
+    var host = options.growlhost || 'localhost',
+        app = 'mev',
+        all = ['Mev status'],
+        def = ['Mev status'],
+        pass = options.growlpass || null;
+    var growl = new nodrrr.Nodrrr(host, app, all, def, pass);
+    growl.register();
+  }
+  
+  // Setup and start mev
+  if(options.input && options.output){
+    // Setup input / output
+    var i, o, si, so;
+    if(options.file){
+      // Input and output as file 
+      i = options.input;
+      o = options.output;
     } else {
-      try {
-        s.listen(options.requests);
-      } catch(err) {
-        console.log('Path to unix input socket is invalid');
+      // Open input / output either beeing unix or tcp socket
+      si = net.createServer(function(input){
+        i = input;
+      });
+      so = net.createServer(function(output){
+        o = output;
+      });
+      // Input socket
+      if(parseFloat(options.input)) {
+        si.listen(parseFloat(options.input), 'localhost');
+      } else {
+        try {
+          si.listen(options.input);
+        } catch(err) {
+          console.log('Path to unix input socket is invalid');
+        }
+      }
+      // Output socket
+      if(parseFloat(options.output)) {
+        so.listen(parseFloat(options.output), 'localhost');
+      } else {
+        try {
+          so.listen(options.output);          
+        } catch(err) {
+          console.log('Path to unix input socket is invalid');          
+        }
       }
     }
-    // Open output
-    try {
-      o = net.createConnection(options.output);
-    } catch(err) {
-      console.log('Output socket is invalid');      
-    }
-    
+      
     if(options.module == 'rdns') {
       // Using reverse dns module so create and run
       var module = new Rdns('rdns'),
-  	    	mev = new Mev(module, i, o, options.debug);
+          flags = { debug: options.debug, file: options.file },
+        	mev = new Mev(module, i, o, flags);
       if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false);
       mev.start();
     }
-  }  
-  
-  mev.on('shutdown', function{
-    if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver done', 0, false);    
-  });
+  } else {
+    // Missing needed options printing help
+    console.log(nomnom.getUsage());
+  } 
   
 })()
 
