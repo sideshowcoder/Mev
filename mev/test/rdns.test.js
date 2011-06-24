@@ -343,12 +343,8 @@ module.exports = {
         },
         result = {
           ip: '131.159.20',
-          cns: 'tuminfo1.informatik.tu-muenchen.de',
-          nsl: ['tuminfo1.informatik.tu-muenchen.de',
-                'dns1.lrz.de',
-                'dns1.net.informatik.tu-muenchen.de',
-                'dns2.lrz.de',
-                'dns3.lrz.de' ],
+          cns: 'a.ns.20.159.131.in-addr.arpa',
+          nsl: ['a.ns.20.159.131.in-addr.arpa'],
           reqnsl: false,
           ptr: false
         };

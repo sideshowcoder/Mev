@@ -90,49 +90,42 @@
   
   // Setup and start mev
   if(options.input && options.output){
+    
+    function initMev(ind, outd, flags){
+      if(options.module == 'rdns') {
+      // Using reverse dns module so create and run
+      var module = new Rdns('rdns'),
+        	mev = new Mev(module, ind, outd, flags);
+      if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false);
+      mev.start();
+      }
+    }
+
     // Setup input / output
-    var i, o, si, so;
+    var si;
     if(options.file){
       // Input and output as file 
-      i = options.input;
-      o = options.output;
+      flags = { debug: options.debug, file: true },
+      initMev(options.input, options.output, flags);
     } else {
       // Open input / output either beeing unix or tcp socket
-      si = net.createServer(function(input){
-        i = input;
-      });
-      so = net.createServer(function(output){
-        o = output;
-      });
+      si = net.createServer()
       // Input socket
       if(parseFloat(options.input)) {
-        si.listen(parseFloat(options.input), 'localhost');
+        si.listen(parseFloat(options.input), 'localhost', function(){
+          flags = { debug: options.debug, file: false },
+          initMev(options.input, options.output, flags);
+        });
       } else {
         try {
-          si.listen(options.input);
+          si.listen(options.input, function(){
+            flags = { debug: options.debug, file: false },
+            initMev(options.input, options.output, flags);
+          });
         } catch(err) {
           console.log('Path to unix input socket is invalid');
         }
       }
-      // Output socket
-      if(parseFloat(options.output)) {
-        so.listen(parseFloat(options.output), 'localhost');
-      } else {
-        try {
-          so.listen(options.output);          
-        } catch(err) {
-          console.log('Path to unix input socket is invalid');          
-        }
-      }
-    }
-      
-    if(options.module == 'rdns') {
-      // Using reverse dns module so create and run
-      var module = new Rdns('rdns'),
-          flags = { debug: options.debug, file: options.file },
-        	mev = new Mev(module, i, o, flags);
-      if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false);
-      mev.start();
     }
   } else {
     // Missing needed options printing help

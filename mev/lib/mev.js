@@ -19,28 +19,83 @@ var sys = require('sys'),
  * flags: 
  *        flags.debug: enable or disable debugging
  *        flags.timeout: maximum time between responses before shutdown (defaults to 30sec)
+ *        flags.file: input and output are no sockets but files, this is implemented for legacy reasons
  */
 function Mev(mmodule, input, output, flags) {
 	
   var that = this,
       flags = flags || {},
+      file = flags.file || false,
       debug = flags.debug || false,
-      timeout = flags.timeout || 30000;
+      timeout = flags.timeout || 30000,
+      outd,
+      ind;
   
   that.mm = mmodule;
   
   // shutdown after TIMEOUT inactivity unless timeout is set to 0
   if(timeout !== 0) td = setTimeout(that.stop, timeout);
   
-	// Read input from socket
-	input.on('data', function(){
-	  // close connection on EOF
-	  if(data.indexOf('EOF') !== -1) {
-      input.end();
-      return;	    
-	  }
-	  that.dataInput(data);
-	});
+  that.finishRes = function(){};
+  
+  if(file) {
+    // Setup for file
+    outd = fs.openSync(output, 'a');
+    ind = fs.readFile(input, 'utf8', function(err, data){
+      if(err) throw err;
+      that.dataInput(data);
+    });
+    // Finished Request
+  	that.finishRes = function(res){
+  		logger('finishResult: ', res)
+  	  // reset the inactivity timeout
+  	  if(td) {
+  	    clearTimeout(td);
+  	    td = setTimeout(that.stop, timeout);
+      }
+      fs.writeSync(outd, res.key + ', ' + res.value + '\n');
+      that.emit('finish', res);
+  	};
+  } else {
+    // Output socket
+    var sout = net.createServer(function(sock){
+      that.finishRes = function(res){
+    		logger('finishResult: ', res)
+    	  // reset the inactivity timeout
+    	  if(td) {
+    	    clearTimeout(td);
+    	    td = setTimeout(that.stop, timeout);
+        }
+        sock.write(res.key + ', ' + res.value + '\n');
+        that.emit('finish', res);        
+      }
+    });
+    if(parseFloat(output)) {
+      sout.listen(parseFloat(output), 'localhost', function(){
+        that.emit('output');
+      });
+    } else {
+      try {
+        sout.listen(output, function(){
+          that.emit('output');
+        });          
+      } catch(err) {
+        console.log('Path to unix input socket is invalid');          
+      }
+    }
+    
+	  // Read input from socket
+	  ind = net.createConnection(input);
+	  ind.setEncoding('utf8');
+	  ind.on('data', function(data){
+  	  // close connection on EOF
+  	  if(data.indexOf('EOF') !== -1) {
+        ind.end();
+        return;	    
+  	  }
+  	  that.dataInput(data);
+  	});
+	}
 	
 	// Data input to module
 	that.dataInput = function(data){
@@ -61,20 +116,6 @@ function Mev(mmodule, input, output, flags) {
 		// Trigger to communicate with other Mev instances
 		that.mm.on('done', that.finishRes);
 	};
-	
-	// Finished Request
-	that.finishRes = function(res){
-		logger('finishResult: ', res)
-	  // reset the inactivity timeout
-	  if(td) {
-	    clearTimeout(td);
-	    td = setTimeout(that.stop, timeout);
-    }
-    // write result to socket
-    output.write(output, res.key + ', ' + res.value + '\n')
-    that.emit('finish', res);
-	};
-	
 	
 	// Generate Requests
 	that.genReq = function(data){
@@ -110,16 +151,26 @@ function Mev(mmodule, input, output, flags) {
     that.mm.removeAllListeners('request');
     that.mm.removeAllListeners('result');
     that.mm.removeAllListeners('done');
-    // close sockets
-    try {
-      output.end();
-    } catch(err) {
-      // Nothing to end obviously 
-    }
-    try {
-      if(input) input.end();
-    } catch(err) {
-      // Nothing to end obviously 
+    if(file){
+      logger('Closing input and output file...');
+      try {
+        fs.closeSync(outd);
+        fs.close(ind);
+      } catch (err) {
+        // Nothing to close        
+      }
+    } else {
+      logger('Closing input and output socket...');      
+      try {
+        outd.end();
+      } catch(err) {
+        // Nothing to end obviously 
+      }
+      try {
+        if(input) input.end();
+      } catch(err) {
+        // Nothing to end obviously 
+      }
     }
     // shutdown done
     logger('shut down');
