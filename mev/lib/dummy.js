@@ -48,9 +48,8 @@ function Dummy(id) {
       done = false;
 			finishRes(result.result);
 		} else {
-			var data = { data: result.result };
       done = true;
-			that.emit('data', data);
+			that.emit('data', result.result);
 		}
 	};
 }

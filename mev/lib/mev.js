@@ -35,67 +35,79 @@ function Mev(mmodule, input, output, flags) {
   
   // shutdown after TIMEOUT inactivity unless timeout is set to 0
   if(timeout !== 0) td = setTimeout(that.stop, timeout);
-  
-  that.finishRes = function(){};
-  
-  if(file) {
-    // Setup for file
-    outd = fs.openSync(output, 'a');
-    ind = fs.readFile(input, 'utf8', function(err, data){
-      if(err) throw err;
-      that.dataInput(data);
-    });
-    // Finished Request
-  	that.finishRes = function(res){
-  		logger('finishResult: ', res)
-  	  // reset the inactivity timeout
-  	  if(td) {
-  	    clearTimeout(td);
-  	    td = setTimeout(that.stop, timeout);
-      }
-      fs.writeSync(outd, res.key + ', ' + res.value + '\n');
-      that.emit('finish', res);
-  	};
-  } else {
-    // Output socket
-    var sout = net.createServer(function(sock){
-      that.finishRes = function(res){
+    
+  that.init = function(){
+    logger('starting mev');
+		// Events
+  	logger('registering events');
+  	// Add listener for programm flow
+  	that.mm.on('data', that.genReq);
+  	that.mm.on('request', that.runReq);
+  	that.mm.on('result', that.handleRes);        
+		
+    if(file) {
+      // Setup for file
+      outd = fs.openSync(output, 'a');
+      ind = fs.readFile(input, 'utf8', function(err, data){
+        if(err) throw err;
+        that.dataInput(data);
+      });
+      // Finished Request
+    	that.finishRes = function(res){
     		logger('finishResult: ', res)
     	  // reset the inactivity timeout
     	  if(td) {
     	    clearTimeout(td);
     	    td = setTimeout(that.stop, timeout);
         }
-        sock.write(res.key + ', ' + res.value + '\n');
-        that.emit('finish', res);        
-      }
-    });
-    if(parseFloat(output)) {
-      sout.listen(parseFloat(output), 'localhost', function(){
-        that.emit('output');
-      });
+        fs.writeSync(outd, res.key + ', ' + res.value + '\n');
+        that.emit('finish', res);
+    	};
+    	// Trigger to communicate with other Mev instances
+    	that.mm.on('done', that.finishRes);
     } else {
-      try {
-        sout.listen(output, function(){
+      // Output socket
+      var sout = net.createServer(function(sock){
+        that.finishRes = function(res){
+      		logger('finishResult: ', res)
+      	  // reset the inactivity timeout
+      	  if(td) {
+      	    clearTimeout(td);
+      	    td = setTimeout(that.stop, timeout);
+          }
+          sock.write(res.key + ', ' + res.value + '\n');
+          that.emit('finish', res);        
+        }
+        // Trigger to communicate with other Mev instances
+      	that.mm.on('done', that.finishRes);
+      });
+      if(parseFloat(output)) {
+        sout.listen(parseFloat(output), 'localhost', function(){
           that.emit('output');
-        });          
-      } catch(err) {
-        console.log('Path to unix input socket is invalid');          
+        });
+      } else {
+        try {
+          sout.listen(output, function(){
+            that.emit('output');
+          });          
+        } catch(err) {
+          console.log('Path to unix input socket is invalid');          
+        }
       }
+
+      // Read input from socket
+      ind = net.createConnection(input);
+      ind.setEncoding('utf8');
+      ind.on('data', function(data){
+    	  // close connection on EOF
+    	  if(data.indexOf('EOF') !== -1) {
+          ind.end();
+          return;	    
+    	  }
+    	  that.dataInput(data);
+    	});
     }
-    
-	  // Read input from socket
-	  ind = net.createConnection(input);
-	  ind.setEncoding('utf8');
-	  ind.on('data', function(data){
-  	  // close connection on EOF
-  	  if(data.indexOf('EOF') !== -1) {
-        ind.end();
-        return;	    
-  	  }
-  	  that.dataInput(data);
-  	});
-	}
+  }	
 	
 	// Data input to module
 	that.dataInput = function(data){
@@ -106,17 +118,7 @@ function Mev(mmodule, input, output, flags) {
 			if(	el.indexOf('#') == -1 && el.trim().valueOf() != '') that.mm.readInput(el);
 		});
 	};
-	
-	that.regEvents = function(){
-		logger('registering events');
-		// Add listener for programm flow
-		that.mm.on('data', that.genReq);
-		that.mm.on('request', that.runReq);
-		that.mm.on('result', that.handleRes);        
-		// Trigger to communicate with other Mev instances
-		that.mm.on('done', that.finishRes);
-	};
-	
+		
 	// Generate Requests
 	that.genReq = function(data){
     logger('genReq: ', data);
@@ -135,14 +137,6 @@ function Mev(mmodule, input, output, flags) {
 		that.mm.handleRes(res);
 	};
 	
-	// Start
-	that.start = function(){
-		logger('starting mev');
-		// Events
-		that.regEvents();
-		that.readData();
-	};	
-
 	// Stop
 	that.stop = function(){
     logger('deregistering events');

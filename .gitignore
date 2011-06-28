@@ -7,4 +7,6 @@ mev/npm-debug.log
 testoutput.out
 testtestoutput.out
 mev/tryout
+*.in
+*.out
 .DS_Store

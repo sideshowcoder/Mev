@@ -93,11 +93,11 @@
     
     function initMev(ind, outd, flags){
       if(options.module == 'rdns') {
-      // Using reverse dns module so create and run
-      var module = new Rdns('rdns'),
-        	mev = new Mev(module, ind, outd, flags);
-      if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false);
-      mev.start();
+        // Using reverse dns module so create and run
+        var module = new Rdns('rdns'),
+        	  mev = new Mev(module, ind, outd, flags);
+        if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false);
+        mev.init();
       }
     }
 
