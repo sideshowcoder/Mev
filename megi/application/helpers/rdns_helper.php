@@ -7,8 +7,9 @@ function rdns_start($job, $infile, $outfile, $tool_path)
   $out = realpath($outfile);
   // Build command to execute
   $toexec = $tool_path;
+  $toexec .= ' -f ';
   $toexec .= ' -m rdns';
-  $toexec .= ' -r '.$in;
+  $toexec .= ' -i '.$in;
   $toexec .= ' -o '.$out;
   $toexec .= ' $> /dev/null &';
 
