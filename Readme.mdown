@@ -7,7 +7,6 @@ Mev
 ---
 ### Dependencies
 * nomnomargs
-* redis
 * node [patched to add the ability to set a DNS server per request](https://github.com/sideshowcoder/Add-NodeJS-DNS-Server-Settings)
 * expresso (testing)
 * should (testing)
@@ -20,9 +19,11 @@ Best install via npm
 ### Use
 Most simple usage, to scan 131.159.20.xxx for all reverse DNS entries
   
-  $ echo '131.159.20' | mev -r - -m rdns -o output.csv
+  $ echo '131.159.20' | mev -f -i - -m rdns -o output.csv
 
-Results can either be saved to redis (specify index via --idx) or a csv file via the -o Option. To view all Options run 
+Mev can also connect to a socket to take jobs and return results if the -f/--file is not specified
+
+For Help run 
 
   $ mev -h
 
