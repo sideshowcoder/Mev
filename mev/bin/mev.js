@@ -17,6 +17,7 @@
       nodrrr = require('nodrrr'),
   		Mev = require('../lib/mev'),
     	Rdns = require('../lib/rdns'),
+		Rdnscollector = require('../lib/rdnscollector')
   	  sys = require('sys'),
   		fs = require('fs'),
   		net = require('net');
@@ -35,7 +36,7 @@
     {
       name: 'module',
       string: '-m MODUL, --module=MODUL',
-      help: 'specify module to use currently availible: rdns'
+      help: 'specify module to use currently availible: rdns, rdnscollector'
     },
     {
       name: 'file',
@@ -97,6 +98,12 @@
         var module = new Rdns('rdns'),
         	  mev = new Mev(module, ind, outd, flags);
         if(options.growl) growl.notify('Mev status', 'Mev RDNS resolver', 'RDNS resolver start', 0, false);
+        mev.init();
+      } else if(options.module == 'rdnscollector') {
+        // Using reverse dns collector module so create and run
+        var module = new Rdnscollector('rdnscollector'),
+        	  mev = new Mev(module, ind, outd, flags);
+        if(options.growl) growl.notify('Mev status', 'Mev RDNS collector', 'RDNS collector start', 0, false);
         mev.init();
       }
     }

@@ -16,5 +16,5 @@
                        "should": "*" },
   "dependencies":  {  "nomnom": "*",
                       "nodrrr": "*" },
-  "engines": { "node": "0.3 || 0.4" }
+  "engines": { "node": "0.3 || 0.4 || 0.5" }
 }
